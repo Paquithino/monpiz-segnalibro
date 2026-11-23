@@ -61,3 +61,20 @@ def wrap_text(text: str, measure: Callable[[str], float], width: float) -> list[
                 current = candidate
         lines.append(current)
     return lines
+
+
+def balanced_lines(text: str, measure: Callable[[str], float], width: float) -> list[str]:
+    """Like :func:`wrap_text` for a single short line, but when it needs two lines the
+    break goes where the two are closest in length: "Ricamati / a mano", not
+    "Ricamati a / mano". Longer text falls back to the greedy wrap.
+    """
+    greedy = wrap_text(text, measure, width)
+    if len(greedy) != 2 or "\n" in text:
+        return greedy
+    words = text.split()
+    splits = [(" ".join(words[:i]), " ".join(words[i:])) for i in range(1, len(words))]
+    fitting = [pair for pair in splits if max(measure(pair[0]), measure(pair[1])) <= width]
+    if not fitting:
+        return greedy
+    first, second = min(fitting, key=lambda pair: max(measure(pair[0]), measure(pair[1])))
+    return [first, second]

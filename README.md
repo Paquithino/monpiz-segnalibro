@@ -51,19 +51,20 @@ entrambe le facce lascia libero lo spazio sotto il foro. Senza la sezione `hole`
 `MONPIZ_BIANCOGIALLO.pdf`), rasterizzata a 1200 dpi con fondo trasparente: stampato a 8 cm è
 sopra i 1000 dpi effettivi. Giallo del marchio: RGB 243-189-72, CMYK 4-28-79-0, Pantone 142 C.
 
-### Le icone dei dettagli
+### Le toppe ricamate dei dettagli
 
-Ogni dettaglio del retro può avere un'icona (`icon` nel YAML) disegnata in un cerchio giallo,
-con il nome accanto e la descrizione sotto. Le icone sono tracciati vettoriali in
-`src/monpiz_segnalibro/icons.py`, disegnati in un quadrato di 100 × 100 unità: restano nitide a
-qualsiasi misura e lo spessore delle linee cresce con il cerchio. Disponibili:
+Ogni dettaglio del retro può avere una toppa (`icon` nel YAML): un cerchio di feltro grigio
+scuro come i cappelli, con il bordo cucito e un motivo a punto filza, accanto al nome; la
+descrizione va sotto. I nomi su due righe vanno a capo bilanciati ("Ricamati / a mano"). I
+motivi sono tracciati vettoriali in `src/monpiz_segnalibro/icons.py`, in un quadrato di 100 × 100
+unità: punti, spessore del filo e colori (giallo del logo, crema, azzurro) scalano con la toppa.
 
-| `icon` | Disegno |
+| `icon` | Motivo |
 |---|---|
-| `ricamo` | ago in diagonale, il filo che scende in una fila di punti (tratteggio come la freccia del logo) |
-| `acqua` | goccia con riflesso e una goccia più piccola accanto |
+| `ricamo` | montagne in giallo con una cima crema davanti, la linea del terreno e crocette azzurre, come i ricami sui cappelli |
+| `acqua` | una goccia grande gialla e due piccole crema |
 
-Per aggiungerne una: disegnarla in `icons.py`, aggiungere il nome a `IconName` e a `ICONS`.
+Per aggiungerne uno: disegnarlo in `icons.py`, aggiungere il nome a `IconName` e a `ICONS`.
 Senza `icon` il dettaglio è solo testo.
 
 ### I QR
@@ -84,7 +85,7 @@ src/monpiz_segnalibro/
   surface.py             primitive di disegno su una faccia, abbondanza su tutti i lati
   images.py              ricampionamento del logo alla risoluzione di stampa
   mountain.py            lo skyline dolomitico del lookbook, qui richiama i ricami dei cappelli
-  icons.py               icone vettoriali dei dettagli (ricamo, acqua)
+  icons.py               motivi ricamati delle toppe (ricamo, acqua)
   faces/                 fronte e retro
   builder.py             le due pagine, TrimBox/BleedBox, segni di taglio, guide
   cli.py, watch.py       comandi build / watch / check

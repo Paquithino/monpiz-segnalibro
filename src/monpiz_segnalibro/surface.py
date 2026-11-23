@@ -8,7 +8,7 @@ on all four sides.
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from enum import StrEnum
 
 from reportlab.graphics import renderPDF
@@ -21,8 +21,12 @@ from reportlab.pdfgen.canvas import Canvas
 
 from .geometry import Box, wrap_text
 from .icons import BOX as ICON_BOX
-from .icons import Stroke
+from .icons import Stroke, Thread
 from .theme import Font, TextStyle
+
+BORDER_INSET = 7.0  # icon units: edge of the patch -> stitched border
+BORDER_WIDTH = 1.6
+BORDER_STITCH = (4.0, 3.0)
 
 
 class Align(StrEnum):
@@ -118,27 +122,30 @@ class Surface:
         c.circle(centre[0], self._y(centre[1]), radius, stroke=1, fill=0)
         c.restoreState()
 
-    def badge(self, strokes: Sequence[Stroke], box: Box, ground: Color, ink: Color) -> None:
-        """A circle of ``ground`` filling ``box``, with an icon drawn in ``ink`` inside it."""
+    def patch(
+        self, strokes: Sequence[Stroke], box: Box, felt: Color, threads: Mapping[Thread, Color]
+    ) -> None:
+        """A round felt patch filling ``box``: stitched border, then the motif in running stitch.
+
+        Stitches have round ends, like thread pulled through felt; the dash
+        pattern is corrected for the caps so stitch and gap keep the lengths
+        written in :mod:`icons`.
+        """
         c = self._canvas
         scale = min(box.width, box.height) / ICON_BOX
-        c.saveState()
-        c.setFillColor(ground)
         cx, cy = box.centre
-        c.circle(cx, self._y(cy), scale * ICON_BOX / 2, stroke=0, fill=1)
-        # Icon space: origin at the box's top-left corner, y downwards, 100 units per side.
-        c.translate(box.x, self._y(box.top))
-        c.scale(scale, -scale)
+        c.saveState()
+        c.translate(cx, self._y(cy))
+        c.scale(scale, -scale)  # icon units, origin at the centre, y downwards
+        c.setFillColor(felt)
+        c.circle(0, 0, ICON_BOX / 2, stroke=0, fill=1)
         c.setLineJoin(1)
+        c.setLineCap(1)
+        self._stitch(threads["cream"], BORDER_WIDTH, BORDER_STITCH)
+        c.circle(0, 0, ICON_BOX / 2 - BORDER_INSET, stroke=1, fill=0)
+        c.translate(-ICON_BOX / 2, -ICON_BOX / 2)  # motif space: origin top-left
         for stroke in strokes:
-            c.setStrokeColor(ground if stroke.knockout else ink)
-            c.setLineWidth(stroke.width)
-            if stroke.dash:
-                c.setLineCap(0)
-                c.setDash(*stroke.dash)
-            else:
-                c.setLineCap(1)
-                c.setDash()
+            self._stitch(threads[stroke.thread], stroke.width, stroke.dash)
             path = c.beginPath()
             for command, args in stroke.path:
                 if command == "M":
@@ -147,10 +154,20 @@ class Surface:
                     path.lineTo(*args)
                 elif command == "C":
                     path.curveTo(*args)
-                else:
+                elif command == "Z":
                     path.close()
             c.drawPath(path, stroke=1, fill=0)
         c.restoreState()
+
+    def _stitch(self, color: Color, width: float, dash: tuple[float, float] | None) -> None:
+        c = self._canvas
+        c.setStrokeColor(color)
+        c.setLineWidth(width)
+        if dash:
+            on, off = dash
+            c.setDash(max(on - width, 0.01), off + width)  # round caps add width/2 at each end
+        else:
+            c.setDash()
 
     def rect_outline(self, box: Box, color: Color, width: float = 0.5) -> None:
         c = self._canvas

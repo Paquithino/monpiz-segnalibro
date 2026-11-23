@@ -10,12 +10,14 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from reportlab.lib.colors import Color
+
 from ..errors import ContentError
-from ..geometry import Box, columns, mm
-from ..icons import ICONS
+from ..geometry import Box, balanced_lines, columns, mm
+from ..icons import ICONS, Thread
 from ..models import Back
 from ..mountain import SKYLINE, place
-from ..surface import Surface
+from ..surface import Surface, text_width
 from .base import RenderContext
 
 EYEBROW_TO_TITLE = 19.0
@@ -24,7 +26,7 @@ DASHES = (3.4, 2.2)  # on, off: the rhythm of the logo's dashed arrow
 DASH_WIDTH = 2.2
 DASH_LENGTH = mm(9.5)
 DASHES_TO_DETAIL = 12.0  # dashes -> top of the first detail
-BADGE = mm(9.0)  # diameter of the circle with the icon
+BADGE = mm(11.0)  # diameter of the felt patch
 BADGE_TO_TEXT = mm(2.5)
 BADGE_TO_DESCRIPTION = 10.0  # bottom of the badge -> first baseline of the description
 CAP_HEIGHT = 0.7  # Fraunces capitals, share of the font size: centres the name on the badge
@@ -33,7 +35,7 @@ DETAIL_GAP = 12.0  # bottom of a detail -> top of the next
 QR_SIDE = mm(15.0)
 QR_TO_LABEL = 8.0  # bottom of the QR code -> label baseline
 LABEL_TO_FOOTER = 13.0
-SKYLINE_HEIGHT = mm(8.0)
+SKYLINE_HEIGHT = mm(6.5)
 SKYLINE_WIDTH = 1.1
 SKYLINE_TO_NOTE = 20.0
 MIN_GAP = 12.0  # least air above and below the middle group
@@ -61,13 +63,18 @@ class BackFace:
 
         row = dashes + DASHES_TO_DETAIL  # top of the first detail
         for detail in self.back.details:
-            # With an icon: the badge, the name beside it (centred on it, on two lines if
+            # With an icon: the felt patch, the name beside it (centred on it, on two lines if
             # needed) and the description under both, across the whole column.
             if detail.icon:
                 badge = Box(x, row, BADGE, BADGE)
-                surface.badge(ICONS[detail.icon], badge, p.yellow, p.ink)
+                threads: dict[Thread, Color] = {
+                    "yellow": p.yellow,
+                    "cream": p.thread_cream,
+                    "blue": p.thread_blue,
+                }
+                surface.patch(ICONS[detail.icon], badge, p.felt, threads)
                 name_x = badge.right + BADGE_TO_TEXT
-                names = surface.lines(detail.name, t.item, x + width - name_x)
+                names = balanced_lines(detail.name, lambda s: text_width(s, t.item), x + width - name_x)
                 cap_to_base = t.item.size * CAP_HEIGHT
                 block = cap_to_base + (len(names) - 1) * t.item.leading
                 name = row + (BADGE - block) / 2 + cap_to_base

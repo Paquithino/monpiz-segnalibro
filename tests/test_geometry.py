@@ -32,7 +32,7 @@ def test_skyline_fills_its_box() -> None:
     assert (min(xs), max(xs), min(ys), max(ys)) == (5, 105, 10, 30)
 
 
-def test_icons_stay_inside_their_circle() -> None:
+def test_motifs_stay_inside_the_stitched_border() -> None:
     from monpiz_segnalibro.icons import BOX, ICONS
 
     for name, strokes in ICONS.items():
@@ -40,4 +40,12 @@ def test_icons_stay_inside_their_circle() -> None:
             for _, args in stroke.path:
                 for px, py in zip(args[::2], args[1::2], strict=True):
                     distance = ((px - BOX / 2) ** 2 + (py - BOX / 2) ** 2) ** 0.5
-                    assert distance < BOX / 2 - stroke.width, f"{name}: ({px}, {py}) esce dal cerchio"
+                    # inside the stitched border, which runs 7 units in from the edge
+                    assert distance < BOX / 2 - 10, f"{name}: ({px}, {py}) tocca il bordo cucito"
+
+
+def test_balanced_lines_split_evenly() -> None:
+    from monpiz_segnalibro.geometry import balanced_lines
+
+    assert balanced_lines("Ricamati a mano", len, 11) == ["Ricamati", "a mano"]
+    assert balanced_lines("Corto", len, 11) == ["Corto"]

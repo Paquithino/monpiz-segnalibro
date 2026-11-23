@@ -32,7 +32,7 @@ back:
   title_italic: che li rendono unici.
   details:                # da 1 a 4
     - name: Ricamati a mano
-      icon: ricamo        # icone disponibili: ricamo, acqua (si aggiungono in src/.../icons.py)
+      icon: ricamo        # toppe ricamate: ricamo, acqua (in src/.../icons.py)
       text: Ogni ricamo è fatto a mano, uno per uno. Per questo non esistono due cappelli uguali.
     - name: Resistenti all’acqua
       icon: acqua
