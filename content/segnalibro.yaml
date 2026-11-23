@@ -30,14 +30,22 @@ back:
   eyebrow: I cappelli MonPiz
   title: Dettagli
   title_italic: che li rendono unici.
-  details:                # da 1 a 4
+  layout: grid            # grid: due per riga (fino a 4) | list: uno sotto l'altro, con descrizione lunga
+  details:                # da 1 a 4. Toppe ricamate: ricamo, acqua, lana, crushable (src/.../icons.py)
     - name: Ricamati a mano
-      icon: ricamo        # toppe ricamate: ricamo, acqua (in src/.../icons.py)
-      text: Ogni ricamo è fatto a mano, uno per uno. Per questo non esistono due cappelli uguali.
-    - name: Resistenti all’acqua
+      icon: ricamo
+      text: Ognuno è un pezzo unico
+    - name: Waterproof
       icon: acqua
-      text: Ti accompagnano sotto la pioggia, in città come in montagna.
+      text: Pioggia e neve non li fermano
+    - name: Lana 100%
+      icon: lana
+      text: Calda, morbida, naturale
+    - name: Crushable
+      icon: crushable
+      text: Si piegano e tornano in forma
   note: Non buttare questo cartellino, usalo come segnalibro.
+  skyline: false          # la linea gialla delle montagne sopra la nota
   qr:                     # da 0 a 2, affiancati in basso
     - url: https://www.monpiz.it
       label: monpiz.it

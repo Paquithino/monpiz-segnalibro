@@ -68,3 +68,10 @@ def test_artwork_starts_below_the_hole() -> None:
     without = RenderContext(theme, ImageLibrary(ASSETS, 72), None)
     assert without.content_top == theme.grid.margin
     assert with_hole.content_top > mm(bookmark.hole.bottom_mm)
+
+
+def test_bilingual_version_builds(tmp_path: Path) -> None:
+    content = ROOT / "content" / "segnalibro-bilingue.yaml"
+    bookmark = load_bookmark(content, ASSETS)
+    assert all(detail.name_en for detail in bookmark.back.details)
+    build(BuildOptions(content, ASSETS, tmp_path / "bilingue.pdf", dpi=72))

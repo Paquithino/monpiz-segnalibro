@@ -11,6 +11,7 @@ pip install -e ".[dev]"
 monpiz-segnalibro build                          # dist/MonPiz-Segnalibro.pdf, 600 dpi, con abbondanza
 monpiz-segnalibro build --marks                  # con segni di taglio
 monpiz-segnalibro build --guides -o dist/bozza.pdf   # rifilo, area di sicurezza e foro in magenta (solo bozza)
+monpiz-segnalibro build --content content/segnalibro-bilingue.yaml -o dist/MonPiz-Segnalibro-bilingue.pdf
 monpiz-segnalibro check                          # valida contenuti e immagini
 monpiz-segnalibro watch --guides                 # anteprima live: rigenera a ogni salvataggio (150 dpi)
 ```
@@ -51,11 +52,22 @@ entrambe le facce lascia libero lo spazio sotto il foro. Senza la sezione `hole`
 `MONPIZ_BIANCOGIALLO.pdf`), rasterizzata a 1200 dpi con fondo trasparente: stampato a 8 cm è
 sopra i 1000 dpi effettivi. Giallo del marchio: RGB 243-189-72, CMYK 4-28-79-0, Pantone 142 C.
 
-### Le toppe ricamate dei dettagli
+### Due versioni: italiano e bilingue
 
-Ogni dettaglio del retro può avere una toppa (`icon` nel YAML): un cerchio di feltro grigio
-scuro come i cappelli, con il bordo cucito e un motivo a punto filza, accanto al nome; la
-descrizione va sotto. I nomi su due righe vanno a capo bilanciati ("Ricamati / a mano"). I
+- `content/segnalibro.yaml`: solo italiano, ogni dettaglio con una riga breve sotto il nome.
+- `content/segnalibro-bilingue.yaml`: italiano + inglese. I campi `name_en`, `note_en` e
+  `footer_en` vanno in corsivo verde oliva sotto l'italiano; per lasciare respiro i dettagli
+  qui non hanno la riga descrittiva.
+
+### I dettagli e le toppe ricamate
+
+`back.layout` sceglie la disposizione dei dettagli:
+
+- `grid`: due per riga, fino a quattro: toppa, nome e una riga breve centrati;
+- `list`: uno sotto l'altro, toppa con il nome accanto e la descrizione lunga sotto (per due o tre).
+
+La toppa (`icon`) è un cerchio di feltro grigio scuro come i cappelli, con il bordo cucito e un
+motivo a punto filza. I nomi su due righe vanno a capo bilanciati ("Ricamati / a mano"). I
 motivi sono tracciati vettoriali in `src/monpiz_segnalibro/icons.py`, in un quadrato di 100 × 100
 unità: punti, spessore del filo e colori (giallo del logo, crema, azzurro) scalano con la toppa.
 
@@ -63,9 +75,13 @@ unità: punti, spessore del filo e colori (giallo del logo, crema, azzurro) scal
 |---|---|
 | `ricamo` | montagne in giallo con una cima crema davanti, la linea del terreno e crocette azzurre, come i ricami sui cappelli |
 | `acqua` | una goccia grande gialla e due piccole crema |
+| `lana` | un gomitolo giallo con i giri di filo crema e il capo libero |
+| `crushable` | un cappello con la freccia curva di chi lo arrotola e lo rimette in forma |
 
 Per aggiungerne uno: disegnarlo in `icons.py`, aggiungere il nome a `IconName` e a `ICONS`.
-Senza `icon` il dettaglio è solo testo.
+Senza `icon` il dettaglio è solo testo. `back.skyline` accende la linea gialla delle montagne
+sopra la nota (spenta con quattro dettagli: lo spazio non basta, e le montagne sono già nella
+toppa del ricamo).
 
 ### I QR
 
@@ -75,7 +91,8 @@ leggono senza problemi anche col telefono a 20-30 cm. Nel PDF sono anche link cl
 ## Struttura
 
 ```
-content/segnalibro.yaml  formato, foro, fronte, retro
+content/segnalibro.yaml           formato, foro, fronte, retro (italiano)
+content/segnalibro-bilingue.yaml  stessa cosa, italiano + inglese
 assets/                  fonts/ (OFL) e images/logo-giallo.png
 src/monpiz_segnalibro/
   geometry.py            mm -> pt, box, colonne, a capo (funzioni pure)
@@ -85,7 +102,7 @@ src/monpiz_segnalibro/
   surface.py             primitive di disegno su una faccia, abbondanza su tutti i lati
   images.py              ricampionamento del logo alla risoluzione di stampa
   mountain.py            lo skyline dolomitico del lookbook, qui richiama i ricami dei cappelli
-  icons.py               motivi ricamati delle toppe (ricamo, acqua)
+  icons.py               motivi ricamati delle toppe (ricamo, acqua, lana, crushable)
   faces/                 fronte e retro
   builder.py             le due pagine, TrimBox/BleedBox, segni di taglio, guide
   cli.py, watch.py       comandi build / watch / check

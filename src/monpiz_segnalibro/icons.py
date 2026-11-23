@@ -18,7 +18,7 @@ from typing import Literal
 
 BOX = 100.0
 
-IconName = Literal["ricamo", "acqua"]
+IconName = Literal["ricamo", "acqua", "lana", "crushable"]
 Thread = Literal["yellow", "cream", "blue"]  # colours of the thread, resolved by the theme
 
 # One path command: "M" x y, "L" x y, "C" x1 y1 x2 y2 x y, "Z".
@@ -80,4 +80,47 @@ WATER: tuple[Stroke, ...] = (
     Stroke(_drop(76, 36, 5), "cream", 2.0, FINE_STITCH),
 )
 
-ICONS: dict[str, tuple[Stroke, ...]] = {"ricamo": EMBROIDERY, "acqua": WATER}
+# 100% wool: a ball of yarn, its wraps in cream, the loose end trailing off.
+WOOL: tuple[Stroke, ...] = (
+    Stroke(
+        (
+            ("M", (48, 27)),
+            ("C", (60, 27, 69, 36, 69, 48)),
+            ("C", (69, 60, 60, 69, 48, 69)),
+            ("C", (36, 69, 27, 60, 27, 48)),
+            ("C", (27, 36, 36, 27, 48, 27)),
+        ),
+        "yellow",
+        3.0,
+    ),
+    Stroke((("M", (40, 29)), ("C", (54, 35, 63, 46, 65, 59))), "cream", 2.0, FINE_STITCH),
+    Stroke((("M", (31, 37)), ("C", (45, 42, 55, 54, 56, 67))), "cream", 2.0, FINE_STITCH),
+    Stroke((("M", (28, 51)), ("C", (36, 54, 42, 60, 43, 68))), "cream", 2.0, FINE_STITCH),
+    Stroke((("M", (66, 61)), ("C", (73, 66, 70, 74, 77, 75))), "yellow", 2.4, FINE_STITCH),  # loose end
+)
+
+# Crushable: a hat with a curved arrow over it, rolled up and back into shape.
+CRUSHABLE: tuple[Stroke, ...] = (
+    Stroke(  # crown, pinched at the top
+        (
+            ("M", (36, 64)),
+            ("L", (38, 46)),
+            ("C", (39, 40, 44, 40, 50, 43)),
+            ("C", (56, 40, 61, 40, 62, 46)),
+            ("L", (64, 64)),
+        ),
+        "yellow",
+        3.0,
+    ),
+    Stroke((("M", (22, 66)), ("C", (40, 72, 60, 72, 78, 66))), "yellow", 3.0),  # brim
+    Stroke(_line((37, 59), (63, 59)), "cream", 2.0, FINE_STITCH),  # band
+    Stroke((("M", (28, 44)), ("C", (30, 22, 70, 22, 72, 40))), "cream", 2.2, FINE_STITCH),  # arrow
+    Stroke(_line((66, 35), (72, 41), (78, 35)), "cream", 2.2, None),  # arrow head, pointing down
+)
+
+ICONS: dict[str, tuple[Stroke, ...]] = {
+    "ricamo": EMBROIDERY,
+    "acqua": WATER,
+    "lana": WOOL,
+    "crushable": CRUSHABLE,
+}

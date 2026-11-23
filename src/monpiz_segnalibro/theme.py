@@ -57,7 +57,10 @@ class Typography:
     title: TextStyle
     title_italic: TextStyle  # second line of the title, for contrast
     item: TextStyle  # name of a detail
+    grid_item: TextStyle  # name of a detail in the two-column grid
+    translation: TextStyle  # English line under an Italian name or note
     text: TextStyle  # description of a detail
+    caption: TextStyle  # short line under a detail in the grid
     note: TextStyle  # "usalo come segnalibro"
     label: TextStyle  # captions under the QR codes
     small: TextStyle  # footer
@@ -94,7 +97,10 @@ def default_theme() -> Theme:
         title=TextStyle(Font.DISPLAY, 17.0, 18.0, p.ink),
         title_italic=TextStyle(Font.DISPLAY_ITALIC, 12.5, 14.5, p.accent),
         item=TextStyle(Font.SERIF, 9.0, 11.0, p.ink),
+        grid_item=TextStyle(Font.SERIF, 8.2, 9.8, p.ink),
+        translation=TextStyle(Font.DISPLAY_ITALIC, 7.0, 8.6, p.accent),
         text=TextStyle(Font.SANS, 6.6, 9.4, p.body),
+        caption=TextStyle(Font.SANS, 5.8, 7.6, p.body),
         note=TextStyle(Font.DISPLAY_ITALIC, 9.6, 12.0, p.accent),
         label=TextStyle(Font.SANS, 5.4, 7.0, p.ink),
         small=TextStyle(Font.SANS, 5.4, 7.0, p.muted),

@@ -10,7 +10,7 @@ from __future__ import annotations
 
 from collections.abc import Iterator
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_validator
 
@@ -55,7 +55,8 @@ class Front(_Model):
 
 class Detail(_Model):
     name: Text
-    text: Text
+    name_en: str = ""  # bilingual cards: the English name, in italics under the Italian one
+    text: str = ""  # description (list) or short line under the name (grid)
     icon: IconName | None = None  # drawn in a yellow circle beside the text (see icons.py)
 
 
@@ -68,10 +69,14 @@ class Back(_Model):
     eyebrow: Text
     title: Text
     title_italic: str = ""
+    layout: Literal["list", "grid"] = "list"  # grid: two per row, for three or four details
     details: list[Detail] = Field(min_length=1, max_length=4)
     note: str = ""  # "Non buttare questo cartellino..."
+    note_en: str = ""  # bilingual cards: in italics under the note
+    skyline: bool = True  # the yellow mountain line above the note
     qr: list[QrCode] = Field(default_factory=list, max_length=2)
     footer: str = ""
+    footer_en: str = ""  # bilingual cards: second footer line
 
 
 class Bookmark(_Model):
