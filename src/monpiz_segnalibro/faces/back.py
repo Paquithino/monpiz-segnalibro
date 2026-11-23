@@ -55,8 +55,9 @@ GRID_GUTTER = mm(2.0)
 QR_SIDE = mm(15.0)
 QR_TO_LABEL = 8.0  # bottom of the QR code -> label baseline
 LABEL_TO_FOOTER = 13.0
-SKYLINE_HEIGHT = mm(6.5)
-SKYLINE_WIDTH = 1.1
+SKYLINE_SPAN = mm(20.0)  # a small ridge, not a full-width rule: it divides the blocks
+SKYLINE_HEIGHT = mm(7.0)
+SKYLINE_WIDTH = 1.0
 SKYLINE_TO_NOTE = 20.0
 MIN_GAP = 12.0  # least air above and below the middle group
 NOTE_TO_TRANSLATION = 12.0  # last baseline of the note -> first baseline of its English line
@@ -126,7 +127,7 @@ class BackFace:
             )
         top = top_end + (room - group) / 2
         if self.back.skyline:
-            surface.polyline(place(SKYLINE, x, top, width, SKYLINE_HEIGHT), p.yellow, SKYLINE_WIDTH)
+            surface.polyline(place(SKYLINE, x, top, SKYLINE_SPAN, SKYLINE_HEIGHT), p.yellow, SKYLINE_WIDTH)
         first = top + skyline + t.note.size
         for index, line in enumerate(note_lines):
             surface.text(line, x, first + index * t.note.leading, t.note)

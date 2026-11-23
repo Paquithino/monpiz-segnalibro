@@ -22,7 +22,7 @@ hole:
 
 # FRONTE: solo il logo nero + giallo, ruotato, si legge dal basso verso l'alto ##################################
 front:
-  logo: images/logo-giallo.png
+  logo: images/logo-giallo.svg  # vettoriale, colori CMYK originali
   logo_width_mm: 34       # ingombro del logo nella larghezza del cartellino (la lunghezza segue)
 
 # RETRO ######################################################################################################
@@ -45,7 +45,7 @@ back:
       icon: crushable
       text: Si piegano e tornano in forma
   note: Non buttare questo cartellino, usalo come segnalibro.
-  skyline: false          # la linea gialla delle montagne sopra la nota
+  skyline: true           # il piccolo profilo giallo delle montagne che separa dettagli e nota
   qr:                     # da 0 a 2, affiancati in basso
     - url: https://www.monpiz.it
       label: monpiz.it

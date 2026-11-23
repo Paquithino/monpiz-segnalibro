@@ -14,15 +14,16 @@ from enum import StrEnum
 from reportlab.graphics import renderPDF
 from reportlab.graphics.barcode.qr import QrCodeWidget
 from reportlab.graphics.shapes import Drawing
-from reportlab.lib.colors import Color
-from reportlab.lib.utils import ImageReader
+from reportlab.lib.colors import Color, HexColor
 from reportlab.pdfbase.pdfmetrics import stringWidth
-from reportlab.pdfgen.canvas import Canvas
+from reportlab.pdfgen.canvas import FILL_EVEN_ODD, FILL_NON_ZERO, Canvas
 
 from .geometry import Box, wrap_text
 from .icons import BOX as ICON_BOX
 from .icons import Stroke, Thread
+from .outline import Outliner
 from .theme import Font, TextStyle
+from .vector import VectorArtwork
 
 BORDER_INSET = 7.0  # icon units: edge of the patch -> stitched border
 BORDER_WIDTH = 1.6
@@ -46,11 +47,20 @@ def text_width(text: str, style: TextStyle) -> float:
 
 
 class Surface:
-    def __init__(self, canvas: Canvas, width: float, height: float, *, bleed: float = 0.0) -> None:
+    def __init__(
+        self,
+        canvas: Canvas,
+        width: float,
+        height: float,
+        *,
+        bleed: float = 0.0,
+        outliner: Outliner | None = None,
+    ) -> None:
         self._canvas = canvas
         self.width = width
         self.height = height
         self._bleed = bleed
+        self._outliner = outliner  # set: text is drawn as paths, no fonts in the PDF
 
     @property
     def box(self) -> Box:
@@ -177,22 +187,41 @@ class Surface:
         c.rect(box.x, self._y(box.bottom), box.width, box.height, stroke=1, fill=0)
         c.restoreState()
 
-    # -- images -------------------------------------------------------------
+    # -- vector artwork -----------------------------------------------------
 
-    def image_turned(
-        self, image: ImageReader, centre: tuple[float, float], length: float, side: float
+    def artwork_turned(
+        self, artwork: VectorArtwork, centre: tuple[float, float], length: float, side: float
     ) -> None:
-        """``image`` turned 90° anticlockwise, so it reads from bottom to top.
+        """``artwork`` turned 90° anticlockwise, so it reads from bottom to top.
 
-        ``length`` is the image's own width (now running up the card) and
+        ``length`` is the artwork's own width (now running up the card) and
         ``side`` its own height (now across the card); ``centre`` is where the
-        middle of the image lands.
+        middle of the artwork lands. Paths with a CMYK colour are filled in
+        DeviceCMYK, so the logo keeps its print values (pure K black).
         """
         c = self._canvas
         c.saveState()
         c.translate(centre[0], self._y(centre[1]))
         c.rotate(90)
-        c.drawImage(image, -length / 2, -side / 2, length, side, mask="auto")
+        # viewBox -> a length x side box centred on the origin, y flipped (SVG grows downwards)
+        c.scale(length / artwork.width, -side / artwork.height)
+        c.translate(-artwork.x - artwork.width / 2, -artwork.y - artwork.height / 2)
+        for vector in artwork.paths:
+            if vector.cmyk:
+                c.setFillColorCMYK(*vector.cmyk)
+            else:
+                c.setFillColor(HexColor(vector.rgb))
+            path = c.beginPath()
+            for command, args in vector.commands:
+                if command == "M":
+                    path.moveTo(*args)
+                elif command == "L":
+                    path.lineTo(*args)
+                elif command == "C":
+                    path.curveTo(*args)
+                else:
+                    path.close()
+            c.drawPath(path, stroke=0, fill=1, fillMode=FILL_EVEN_ODD if vector.even_odd else FILL_NON_ZERO)
         c.restoreState()
 
     def qr(self, url: str, box: Box, color: Color) -> None:
@@ -220,6 +249,9 @@ class Surface:
         """Draw one line; ``x`` is its left edge, centre or right edge per ``align``. Returns its width."""
         width = text_width(text, style)
         left = x - {Align.LEFT: 0.0, Align.CENTER: width / 2, Align.RIGHT: width}[align]
+        if self._outliner:
+            self._outliner.draw(self._canvas, _shown(text, style), left, self._y(baseline), style)
+            return width
         t = self._canvas.beginText(left, self._y(baseline))
         t.setFont(style.font, style.size)
         t.setFillColor(style.color)

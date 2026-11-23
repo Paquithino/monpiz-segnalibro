@@ -8,13 +8,28 @@ Palette e caratteri (Fraunces, Inter) sono gli stessi, più il giallo del logo.
 
 ```bash
 pip install -e ".[dev]"
-monpiz-segnalibro build                          # dist/MonPiz-Segnalibro.pdf, 600 dpi, con abbondanza
-monpiz-segnalibro build --marks                  # con segni di taglio
+monpiz-segnalibro build              # dist/MonPiz-Segnalibro.pdf + dist/MonPiz-Segnalibro-vettoriale.pdf
+monpiz-segnalibro build --marks      # con segni di taglio
+monpiz-segnalibro build --no-vector  # solo il primo PDF
 monpiz-segnalibro build --guides -o dist/bozza.pdf   # rifilo, area di sicurezza e foro in magenta (solo bozza)
 monpiz-segnalibro build --content content/segnalibro-bilingue.yaml -o dist/MonPiz-Segnalibro-bilingue.pdf
-monpiz-segnalibro check                          # valida contenuti e immagini
-monpiz-segnalibro watch --guides                 # anteprima live: rigenera a ogni salvataggio (150 dpi)
+monpiz-segnalibro check              # valida contenuti, logo e font
+monpiz-segnalibro watch --guides     # anteprima live: rigenera a ogni salvataggio
 ```
+
+## Due PDF a ogni build, entrambi vettoriali
+
+Nel cartellino non c'è nessuna immagine raster: logo, testi, toppe ricamate, montagne e QR sono
+tutti tracciati, nitidi a qualsiasi ingrandimento. `build` scrive due file:
+
+| File | Testi | Per |
+|---|---|---|
+| `MonPiz-Segnalibro.pdf` | font incorporati (selezionabili, ricercabili) | anteprime, invio digitale, tipografie che accettano i font |
+| `MonPiz-Segnalibro-vettoriale.pdf` | convertiti in tracciati, nessun font nel file | la tipografia che chiede "testi in curve" |
+
+La conversione (`outline.py`) legge i glifi dagli stessi file TrueType e li avanza con le stesse
+larghezze usate per l'impaginazione: le due versioni coincidono. Con `-o dist/X.pdf` la copia
+vettoriale si chiama `dist/X-vettoriale.pdf`.
 
 `watch` funziona come nella brochure: tiene d'occhio `content/`, `assets/` e `src/` e
 rigenera `dist/MonPiz-Segnalibro-anteprima.pdf` (già rifilato) a ogni file salvato. Aperto in
@@ -48,9 +63,12 @@ entrambe le facce lascia libero lo spazio sotto il foro. Senza la sezione `hole`
 
 ### Il logo
 
-`assets/images/logo-giallo.png` è la versione nero + giallo del marchio (file
-`MONPIZ_BIANCOGIALLO.pdf`), rasterizzata a 1200 dpi con fondo trasparente: stampato a 8 cm è
-sopra i 1000 dpi effettivi. Giallo del marchio: RGB 243-189-72, CMYK 4-28-79-0, Pantone 142 C.
+`assets/images/logo-giallo.svg` è il marchio nero + giallo con i tracciati originali di
+`MONPIZ_BIANCOGIALLO.pdf` (6 tracciati, nessuna conversione in pixel). Ogni tracciato porta in
+`data-cmyk` i valori di stampa originali, che nel PDF vengono scritti in CMYK: il nero resta
+K 100% puro, il giallo C3,5 M27,3 Y81,3 K0 come nel file del marchio (Pantone 142 C, RGB
+243-189-72). `vector.py` legge solo l'SVG che serve a un logo (tracciati pieni, niente
+trasformazioni, testi o immagini) e rifiuta il resto con un messaggio chiaro.
 
 ### Due versioni: italiano e bilingue
 
@@ -79,9 +97,8 @@ unità: punti, spessore del filo e colori (giallo del logo, crema, azzurro) scal
 | `crushable` | un cappello con la freccia curva di chi lo arrotola e lo rimette in forma |
 
 Per aggiungerne uno: disegnarlo in `icons.py`, aggiungere il nome a `IconName` e a `ICONS`.
-Senza `icon` il dettaglio è solo testo. `back.skyline` accende la linea gialla delle montagne
-sopra la nota (spenta con quattro dettagli: lo spazio non basta, e le montagne sono già nella
-toppa del ricamo).
+Senza `icon` il dettaglio è solo testo. `back.skyline` accende il piccolo profilo giallo delle montagne
+(20 mm) che separa i dettagli dalla nota.
 
 ### I QR
 
@@ -93,14 +110,15 @@ leggono senza problemi anche col telefono a 20-30 cm. Nel PDF sono anche link cl
 ```
 content/segnalibro.yaml           formato, foro, fronte, retro (italiano)
 content/segnalibro-bilingue.yaml  stessa cosa, italiano + inglese
-assets/                  fonts/ (OFL) e images/logo-giallo.png
+assets/                  fonts/ (OFL) e images/logo-giallo.svg
 src/monpiz_segnalibro/
   geometry.py            mm -> pt, box, colonne, a capo (funzioni pure)
   models.py              schema dei contenuti (Pydantic, chiavi sconosciute rifiutate)
   content.py             caricamento YAML + verifica che ogni immagine esista
   theme.py               design token: palette (+ giallo del logo), stili di testo, margini
   surface.py             primitive di disegno su una faccia, abbondanza su tutti i lati
-  images.py              ricampionamento del logo alla risoluzione di stampa
+  vector.py              lettore SVG minimale: il logo come tracciati, colori CMYK
+  outline.py             testi convertiti in tracciati per il PDF vettoriale
   mountain.py            lo skyline dolomitico del lookbook, qui richiama i ricami dei cappelli
   icons.py               motivi ricamati delle toppe (ricamo, acqua, lana, crushable)
   faces/                 fronte e retro

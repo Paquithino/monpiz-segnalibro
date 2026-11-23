@@ -10,6 +10,7 @@ from pydantic import ValidationError
 
 from .errors import ContentError
 from .models import Bookmark
+from .vector import load_svg
 
 
 def _read_yaml(path: Path) -> Any:
@@ -40,4 +41,5 @@ def load_bookmark(content_file: Path, assets_dir: Path) -> Bookmark:
     if missing:
         listing = "\n".join(f"  - {name}" for name in missing)
         raise ContentError(f"Immagini mancanti in {assets_dir}:\n{listing}")
+    load_svg(assets_dir / bookmark.front.logo)  # fails here, at check time, if the SVG is unusable
     return bookmark

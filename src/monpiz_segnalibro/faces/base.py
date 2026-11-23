@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+from pathlib import Path
 from typing import Protocol
 
 from ..geometry import mm
-from ..images import ImageLibrary
 from ..models import Hole
 from ..surface import Surface
 from ..theme import Theme
@@ -17,9 +17,8 @@ HOLE_CLEARANCE = mm(4.0)  # free paper below the hole, so the string never cover
 @dataclass(slots=True)
 class RenderContext:
     theme: Theme
-    images: ImageLibrary
+    assets_dir: Path
     hole: Hole | None
-    warnings: list[str] = field(default_factory=list)
 
     @property
     def content_top(self) -> float:

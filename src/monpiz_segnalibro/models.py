@@ -12,7 +12,7 @@ from collections.abc import Iterator
 from pathlib import Path
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_validator
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints, field_validator, model_validator
 
 from .icons import IconName
 
@@ -49,8 +49,15 @@ class Hole(_Model):
 
 
 class Front(_Model):
-    logo: Path
+    logo: Path  # an SVG: the whole card stays vector (see vector.py for what it may contain)
     logo_width_mm: float = Field(gt=0)  # across the card: the logo is turned on its side
+
+    @field_validator("logo")
+    @classmethod
+    def _svg(cls, value: Path) -> Path:
+        if value.suffix.lower() != ".svg":
+            raise ValueError("il logo deve essere un file .svg (vettoriale)")
+        return value
 
 
 class Detail(_Model):

@@ -63,8 +63,7 @@ def build_command(options: BuildOptions) -> list[str]:
         str(options.assets_dir),
         "--output",
         str(options.output),
-        "--dpi",
-        str(options.dpi),
+        "--no-vector",  # the preview only needs the PDF you look at
         *flags,
     ]
 

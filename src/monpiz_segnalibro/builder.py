@@ -25,8 +25,8 @@ from .content import load_bookmark
 from .faces import BackFace, Face, FrontFace, RenderContext
 from .fonts import register_fonts
 from .geometry import mm
-from .images import ImageLibrary
 from .models import Bookmark
+from .outline import Outliner
 from .surface import Surface
 from .theme import Font, Theme, default_theme
 
@@ -42,37 +42,46 @@ class BuildOptions:
     content_file: Path
     assets_dir: Path
     output: Path
-    dpi: int = 300
+    vector_output: Path | None = None  # also write this copy with every text converted to outlines
     bleed: bool = True
     marks: bool = False
     guides: bool = False
 
 
 @dataclass(frozen=True, slots=True)
-class BuildResult:
-    output: Path
+class Output:
+    path: Path
     size_bytes: int
+    outlined: bool  # text as paths, no fonts in the file
+
+
+@dataclass(frozen=True, slots=True)
+class BuildResult:
+    outputs: tuple[Output, ...]
     size_mm: tuple[float, float]
-    warnings: tuple[str, ...]
 
 
 def faces(bookmark: Bookmark) -> Sequence[tuple[str, Face]]:
     return [("Fronte", FrontFace(bookmark.front)), ("Retro", BackFace(bookmark.back))]
 
 
-def render(bookmark: Bookmark, options: BuildOptions, theme: Theme | None = None) -> list[str]:
-    """Write the PDF to ``options.output``; returns the print warnings."""
+def render(
+    bookmark: Bookmark, options: BuildOptions, output: Path, *, outline_text: bool, theme: Theme | None = None
+) -> None:
+    """Write the PDF to ``output``; with ``outline_text`` every glyph becomes a path."""
     theme = theme or default_theme()
-    register_fonts(options.assets_dir / "fonts")
-    ctx = RenderContext(theme, ImageLibrary(options.assets_dir, options.dpi), bookmark.hole)
+    fonts_dir = options.assets_dir / "fonts"
+    register_fonts(fonts_dir)  # metrics for the layout, in both modes
+    outliner = Outliner(fonts_dir) if outline_text else None
+    ctx = RenderContext(theme, options.assets_dir, bookmark.hole)
     fmt = bookmark.format
     width, height = mm(fmt.width_mm), mm(fmt.height_mm)
 
     bleed = mm(fmt.bleed_mm) if options.bleed else 0.0
     margin = bleed + (SLUG if options.marks else 0.0)  # trim edge -> page edge
     trim = (margin, margin, margin + width, margin + height)
-    partial = options.output.with_name(f".{options.output.name}.{os.getpid()}.partial")
-    options.output.parent.mkdir(parents=True, exist_ok=True)
+    partial = output.with_name(f".{output.name}.{os.getpid()}.partial")
+    output.parent.mkdir(parents=True, exist_ok=True)
 
     canvas = Canvas(
         str(partial),
@@ -93,7 +102,7 @@ def render(bookmark: Bookmark, options: BuildOptions, theme: Theme | None = None
             canvas.addOutlineEntry(name, name)  # "Fronte" / "Retro" in the viewer's sidebar
             canvas.saveState()
             canvas.translate(margin, margin)
-            surface = Surface(canvas, width, height, bleed=bleed)
+            surface = Surface(canvas, width, height, bleed=bleed, outliner=outliner)
             surface.clip()
             face.draw(surface, ctx)
             if options.guides:
@@ -103,21 +112,21 @@ def render(bookmark: Bookmark, options: BuildOptions, theme: Theme | None = None
                 _draw_marks(canvas, trim, bleed)
             canvas.showPage()
         canvas.save()
-        partial.replace(options.output)
+        partial.replace(output)
     finally:
         partial.unlink(missing_ok=True)
-    return ctx.warnings
 
 
 def build(options: BuildOptions) -> BuildResult:
     bookmark = load_bookmark(options.content_file, options.assets_dir)
-    warnings = render(bookmark, options)
-    return BuildResult(
-        output=options.output,
-        size_bytes=options.output.stat().st_size,
-        size_mm=(bookmark.format.width_mm, bookmark.format.height_mm),
-        warnings=tuple(dict.fromkeys(warnings)),
-    )
+    targets = [(options.output, False)]
+    if options.vector_output:
+        targets.append((options.vector_output, True))
+    outputs = []
+    for path, outlined in targets:
+        render(bookmark, options, path, outline_text=outlined)
+        outputs.append(Output(path, path.stat().st_size, outlined))
+    return BuildResult(tuple(outputs), (bookmark.format.width_mm, bookmark.format.height_mm))
 
 
 def _draw_marks(canvas: Canvas, trim: tuple[float, float, float, float], bleed: float) -> None:
