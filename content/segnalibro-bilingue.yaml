@@ -48,7 +48,7 @@ back:
       icon: crushable
   note: Non buttare questo cartellino, usalo come segnalibro.
   note_en: Keep this tag and use it as a bookmark.
-  skyline: true           # il profilo giallo delle montagne, a tutta larghezza, tra dettagli e nota
+  divider: montagne       # tra dettagli e nota: montagne (profilo giallo) | trattini (come sotto il titolo) | nessuno
   qr:                     # da 0 a 2, affiancati in basso
     - url: https://www.monpiz.it
       label: monpiz.it

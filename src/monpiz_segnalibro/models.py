@@ -80,7 +80,7 @@ class Back(_Model):
     details: list[Detail] = Field(min_length=1, max_length=4)
     note: str = ""  # "Non buttare questo cartellino..."
     note_en: str = ""  # bilingual cards: in italics under the note
-    skyline: bool = True  # the yellow mountain line above the note
+    divider: Literal["montagne", "trattini", "nessuno"] = "montagne"  # between details and note
     qr: list[QrCode] = Field(default_factory=list, max_length=2)
     footer: str = ""
     footer_en: str = ""  # bilingual cards: second footer line

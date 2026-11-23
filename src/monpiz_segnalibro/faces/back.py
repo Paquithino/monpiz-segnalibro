@@ -57,7 +57,7 @@ QR_TO_LABEL = 8.0  # bottom of the QR code -> label baseline
 LABEL_TO_FOOTER = 13.0
 SKYLINE_HEIGHT = mm(7.0)  # across the whole column, like the lookbook's skyline
 SKYLINE_WIDTH = 1.0
-SKYLINE_TO_NOTE = 20.0
+DIVIDER_TO_NOTE = 20.0  # bottom of the divider -> first baseline of the note
 MIN_GAP = 12.0  # least air above and below the middle group
 NOTE_TO_TRANSLATION = 12.0  # last baseline of the note -> first baseline of its English line
 NAME_TO_TRANSLATION = 9.0  # last baseline of a name -> its English line
@@ -109,25 +109,30 @@ class BackFace:
                 surface.text(code.label, cx, label, t.label)
             bottom_start = qr_bottom - QR_SIDE
 
-        # Middle: the mountain line (optional) and the note, centred in what is left.
+        # Middle: the divider (mountains or dashes) and the note, centred in what is left.
         note_lines = surface.lines(self.back.note, t.note, width) if self.back.note else []
         en_lines = surface.lines(self.back.note_en, t.translation, width) if self.back.note_en else []
-        skyline = SKYLINE_HEIGHT + SKYLINE_TO_NOTE - t.note.size if self.back.skyline else 0.0
+        divider_height = {"montagne": SKYLINE_HEIGHT, "trattini": DASH_WIDTH, "nessuno": 0.0}[
+            self.back.divider
+        ]
+        divider = divider_height + DIVIDER_TO_NOTE - t.note.size if divider_height else 0.0
         note = t.note.size + (len(note_lines) - 1) * t.note.leading if note_lines else 0.0
         if en_lines:
             note += NOTE_TO_TRANSLATION + (len(en_lines) - 1) * t.translation.leading
-        group = skyline + note
+        group = divider + note
         room = bottom_start - top_end
         if room < group + 2 * MIN_GAP:
             raise ContentError(
                 f"Il retro non sta nel formato: mancano {(group + 2 * MIN_GAP - room) / mm(1):.1f} mm. "
-                "Accorcia i testi (back.details, back.note), togli la linea delle montagne "
-                "(back.skyline) o un QR."
+                "Accorcia i testi (back.details, back.note), togli il divisore "
+                "(back.divider: nessuno) o un QR."
             )
         top = top_end + (room - group) / 2
-        if self.back.skyline:
+        if self.back.divider == "montagne":
             surface.polyline(place(SKYLINE, x, top, width, SKYLINE_HEIGHT), p.yellow, SKYLINE_WIDTH)
-        first = top + skyline + t.note.size
+        elif self.back.divider == "trattini":  # the same yellow dashes as under the title
+            surface.hline(x, x + DASH_LENGTH, top + DASH_WIDTH / 2, p.yellow, DASH_WIDTH, dash=DASHES)
+        first = top + divider + t.note.size
         for index, line in enumerate(note_lines):
             surface.text(line, x, first + index * t.note.leading, t.note)
         first += (len(note_lines) - 1) * t.note.leading + NOTE_TO_TRANSLATION

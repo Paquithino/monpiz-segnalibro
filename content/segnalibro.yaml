@@ -45,7 +45,7 @@ back:
       icon: crushable
       text: Si piegano e tornano in forma
   note: Non buttare questo cartellino, usalo come segnalibro.
-  skyline: true           # il profilo giallo delle montagne, a tutta larghezza, tra dettagli e nota
+  divider: montagne       # tra dettagli e nota: montagne (profilo giallo) | trattini (come sotto il titolo) | nessuno
   qr:                     # da 0 a 2, affiancati in basso
     - url: https://www.monpiz.it
       label: monpiz.it

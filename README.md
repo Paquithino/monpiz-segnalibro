@@ -97,8 +97,9 @@ unità: punti, spessore del filo e colori (giallo del logo, crema, azzurro) scal
 | `crushable` | un cappello con la freccia curva di chi lo arrotola e lo rimette in forma |
 
 Per aggiungerne uno: disegnarlo in `icons.py`, aggiungere il nome a `IconName` e a `ICONS`.
-Senza `icon` il dettaglio è solo testo. `back.skyline` accende il profilo giallo delle montagne a tutta
-larghezza che separa i dettagli dalla nota.
+Senza `icon` il dettaglio è solo testo. `back.divider` sceglie cosa separa i dettagli dalla nota:
+`montagne` (il profilo giallo a tutta larghezza), `trattini` (gli stessi trattini gialli sotto il
+titolo) o `nessuno`.
 
 ### I QR
 
