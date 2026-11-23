@@ -14,6 +14,8 @@ from typing import Annotated
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints, model_validator
 
+from .icons import IconName
+
 Text = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
 
 
@@ -54,6 +56,7 @@ class Front(_Model):
 class Detail(_Model):
     name: Text
     text: Text
+    icon: IconName | None = None  # drawn in a yellow circle beside the text (see icons.py)
 
 
 class QrCode(_Model):

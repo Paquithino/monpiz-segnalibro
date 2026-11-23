@@ -30,3 +30,14 @@ def test_skyline_fills_its_box() -> None:
     points = place(SKYLINE, 5, 10, 100, 20)
     xs, ys = [x for x, _ in points], [y for _, y in points]
     assert (min(xs), max(xs), min(ys), max(ys)) == (5, 105, 10, 30)
+
+
+def test_icons_stay_inside_their_circle() -> None:
+    from monpiz_segnalibro.icons import BOX, ICONS
+
+    for name, strokes in ICONS.items():
+        for stroke in strokes:
+            for _, args in stroke.path:
+                for px, py in zip(args[::2], args[1::2], strict=True):
+                    distance = ((px - BOX / 2) ** 2 + (py - BOX / 2) ** 2) ** 0.5
+                    assert distance < BOX / 2 - stroke.width, f"{name}: ({px}, {py}) esce dal cerchio"

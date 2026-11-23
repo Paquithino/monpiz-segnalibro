@@ -12,6 +12,7 @@ from dataclasses import dataclass
 
 from ..errors import ContentError
 from ..geometry import Box, columns, mm
+from ..icons import ICONS
 from ..models import Back
 from ..mountain import SKYLINE, place
 from ..surface import Surface
@@ -22,9 +23,13 @@ TITLE_TO_DASHES = 11.0
 DASHES = (3.4, 2.2)  # on, off: the rhythm of the logo's dashed arrow
 DASH_WIDTH = 2.2
 DASH_LENGTH = mm(9.5)
-DASHES_TO_DETAIL = 19.0
+DASHES_TO_DETAIL = 12.0  # dashes -> top of the first detail
+BADGE = mm(9.0)  # diameter of the circle with the icon
+BADGE_TO_TEXT = mm(2.5)
+BADGE_TO_DESCRIPTION = 10.0  # bottom of the badge -> first baseline of the description
+CAP_HEIGHT = 0.7  # Fraunces capitals, share of the font size: centres the name on the badge
 NAME_TO_TEXT = 10.5
-DETAIL_GAP = 15.0  # last line of a detail -> next name
+DETAIL_GAP = 12.0  # bottom of a detail -> top of the next
 QR_SIDE = mm(15.0)
 QR_TO_LABEL = 8.0  # bottom of the QR code -> label baseline
 LABEL_TO_FOOTER = 13.0
@@ -54,12 +59,27 @@ class BackFace:
         dashes = last + TITLE_TO_DASHES
         surface.hline(x, x + DASH_LENGTH, dashes, p.yellow, DASH_WIDTH, dash=DASHES)
 
-        name = dashes + DASHES_TO_DETAIL
+        row = dashes + DASHES_TO_DETAIL  # top of the first detail
         for detail in self.back.details:
-            surface.text(detail.name, x, name, t.item)
-            last = surface.paragraph(detail.text, x, name + NAME_TO_TEXT, width, t.text)
-            name = last + DETAIL_GAP + t.item.size
-        top_end = last + t.text.leading - t.text.size  # just under the descenders of the last line
+            # With an icon: the badge, the name beside it (centred on it, on two lines if
+            # needed) and the description under both, across the whole column.
+            if detail.icon:
+                badge = Box(x, row, BADGE, BADGE)
+                surface.badge(ICONS[detail.icon], badge, p.yellow, p.ink)
+                name_x = badge.right + BADGE_TO_TEXT
+                names = surface.lines(detail.name, t.item, x + width - name_x)
+                cap_to_base = t.item.size * CAP_HEIGHT
+                block = cap_to_base + (len(names) - 1) * t.item.leading
+                name = row + (BADGE - block) / 2 + cap_to_base
+                for index, line in enumerate(names):
+                    surface.text(line, name_x, name + index * t.item.leading, t.item)
+                text = badge.bottom + BADGE_TO_DESCRIPTION
+            else:
+                name = surface.paragraph(detail.name, x, row + t.item.size, width, t.item)
+                text = name + NAME_TO_TEXT
+            last = surface.paragraph(detail.text, x, text, width, t.text)
+            row = last + t.text.leading - t.text.size + DETAIL_GAP
+        top_end = row - DETAIL_GAP
 
         # Bottom, from the margin up: footer, QR labels, QR codes.
         bottom = surface.height - g.margin

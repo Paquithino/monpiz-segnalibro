@@ -20,6 +20,8 @@ from reportlab.pdfbase.pdfmetrics import stringWidth
 from reportlab.pdfgen.canvas import Canvas
 
 from .geometry import Box, wrap_text
+from .icons import BOX as ICON_BOX
+from .icons import Stroke
 from .theme import Font, TextStyle
 
 
@@ -114,6 +116,40 @@ class Surface:
         c.setStrokeColor(color)
         c.setLineWidth(width)
         c.circle(centre[0], self._y(centre[1]), radius, stroke=1, fill=0)
+        c.restoreState()
+
+    def badge(self, strokes: Sequence[Stroke], box: Box, ground: Color, ink: Color) -> None:
+        """A circle of ``ground`` filling ``box``, with an icon drawn in ``ink`` inside it."""
+        c = self._canvas
+        scale = min(box.width, box.height) / ICON_BOX
+        c.saveState()
+        c.setFillColor(ground)
+        cx, cy = box.centre
+        c.circle(cx, self._y(cy), scale * ICON_BOX / 2, stroke=0, fill=1)
+        # Icon space: origin at the box's top-left corner, y downwards, 100 units per side.
+        c.translate(box.x, self._y(box.top))
+        c.scale(scale, -scale)
+        c.setLineJoin(1)
+        for stroke in strokes:
+            c.setStrokeColor(ground if stroke.knockout else ink)
+            c.setLineWidth(stroke.width)
+            if stroke.dash:
+                c.setLineCap(0)
+                c.setDash(*stroke.dash)
+            else:
+                c.setLineCap(1)
+                c.setDash()
+            path = c.beginPath()
+            for command, args in stroke.path:
+                if command == "M":
+                    path.moveTo(*args)
+                elif command == "L":
+                    path.lineTo(*args)
+                elif command == "C":
+                    path.curveTo(*args)
+                else:
+                    path.close()
+            c.drawPath(path, stroke=1, fill=0)
         c.restoreState()
 
     def rect_outline(self, box: Box, color: Color, width: float = 0.5) -> None:
