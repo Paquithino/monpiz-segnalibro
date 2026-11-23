@@ -1,0 +1,20 @@
+# Output
+dist/
+site/
+.*.partial
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+build/
+
+# Tooling
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+
+# OS
+.DS_Store

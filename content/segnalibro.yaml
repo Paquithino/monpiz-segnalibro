@@ -1,0 +1,44 @@
+# Contenuti del cartellino-segnalibro dei cappelli MonPiz.
+# I percorsi delle immagini sono relativi alla cartella `assets/`.
+# I testi accettano "\n" (o i blocchi YAML `|`) per forzare un a capo.
+
+meta:
+  title: MonPiz — Cartellino segnalibro cappelli
+  author: MonPiz
+  subject: Cappelli ricamati a mano
+
+# FORMATO ###################################################################################################
+# Misure al rifilo in mm, come il segnalibro delle scarpe (4,7 x 15 cm).
+format:
+  width_mm: 47
+  height_mm: 150
+  bleed_mm: 3
+
+# FORO per il cordino del cartellino (lo fa la tipografia: il PDF non lo stampa, lo mostra solo
+# `--guides`). Il layout lascia libero lo spazio attorno. Togli la sezione se non serve il foro.
+hole:
+  diameter_mm: 5
+  from_top_mm: 8          # dal bordo alto al centro del foro
+
+# FRONTE: solo il logo nero + giallo, ruotato, si legge dal basso verso l'alto ##################################
+front:
+  logo: images/logo-giallo.png
+  logo_width_mm: 34       # ingombro del logo nella larghezza del cartellino (la lunghezza segue)
+
+# RETRO ######################################################################################################
+back:
+  eyebrow: I cappelli MonPiz
+  title: Dettagli
+  title_italic: che li rendono unici.
+  details:                # da 1 a 4
+    - name: Ricamati a mano
+      text: Ogni ricamo è fatto a mano, uno per uno. Per questo non esistono due cappelli uguali.
+    - name: Resistenti all’acqua
+      text: Ti accompagnano sotto la pioggia, in città come in montagna.
+  note: Non buttare questo cartellino, usalo come segnalibro.
+  qr:                     # da 0 a 2, affiancati in basso
+    - url: https://www.monpiz.it
+      label: monpiz.it
+    - url: https://www.instagram.com/monpiz_official/
+      label: "@monpiz_official"
+  footer: MonPiz ti accompagna nella tua lettura.
