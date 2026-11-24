@@ -48,13 +48,13 @@ NAME_TO_TEXT = 10.5
 DETAIL_GAP = 12.0  # bottom of a detail -> top of the next
 
 # grid layout
-GRID_BADGE = mm(9.5)
+GRID_BADGE = mm(10.5)
 GRID_BADGE_TO_NAME = 10.0  # bottom of the patch -> first baseline of the name
 GRID_NAME_TO_TEXT = 8.0
 GRID_ROW_GAP = 11.0  # bottom of a row -> top of the next
 GRID_GUTTER = mm(2.0)
 
-QR_SIDE = mm(14.0)
+QR_SIDE = mm(15.0)
 QR_TO_LABEL = 8.0  # bottom of the QR code -> label baseline
 LABEL_TO_FOOTER = 17.0  # air between the QR codes and the sign-off: its own block
 SKYLINE_HEIGHT = mm(7.0)  # across the whole column, like the lookbook's skyline
