@@ -141,7 +141,7 @@ class BackFace:
 
 
 class _Note:
-    """The "keep this tag" note, its English line, and a felt patch beside them if set.
+    """The "keep this tag" note, its English line, and a felt patch on their right if set.
 
     Its top is the top of the patch or of the first line's lowercase body, so the
     gaps around it look even on the page.
@@ -152,8 +152,10 @@ class _Note:
         self._back, self._ctx, self._surface = back, ctx, surface
         self._x = ctx.theme.grid.margin
         self._patch = NOTE_BADGE if back.note_icon else 0.0
-        text_x = self._x + (self._patch + NOTE_BADGE_TO_TEXT if back.note_icon else 0.0)
-        self._text_x, text_width_ = text_x, width - (text_x - self._x)
+        # Text on the left margin like every other block, the patch on the right edge.
+        self._text_x = self._x
+        self._patch_x = self._x + width - self._patch
+        text_width_ = width - (self._patch + NOTE_BADGE_TO_TEXT if back.note_icon else 0.0)
         self._lines = surface.lines(back.note, t.note, text_width_) if back.note else []
         self._en = surface.lines(back.note_en, t.translation, text_width_) if back.note_en else []
         text = 0.0
@@ -167,7 +169,7 @@ class _Note:
     def draw(self, top: float) -> None:
         t, p = self._ctx.theme.type, self._ctx.theme.palette
         if self._back.note_icon:
-            patch = Box(self._x, top + (self.height - self._patch) / 2, self._patch, self._patch)
+            patch = Box(self._patch_x, top + (self.height - self._patch) / 2, self._patch, self._patch)
             self._surface.patch(ICONS[self._back.note_icon], patch, p.felt, _threads(self._ctx.theme))
         first = top + (self.height - self._text) / 2 + t.note.size * X_HEIGHT
         for index, line in enumerate(self._lines):

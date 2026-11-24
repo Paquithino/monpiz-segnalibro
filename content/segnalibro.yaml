@@ -48,7 +48,7 @@ back:
   divider: trattini       # tra dettagli e nota: trattini (come sotto il titolo) | montagne (profilo giallo) | nessuno
   note: Non buttare questo cartellino, usalo come segnalibro.
   note_en: Keep this tag and use it as a bookmark.
-  note_icon: riciclo      # toppa accanto alla frase (togli la riga per non averla)
+  note_icon: riciclo      # toppa a destra della frase (togli la riga per non averla)
   qr:                     # da 0 a 2, affiancati in basso
     - url: https://www.monpiz.it
       label: monpiz.it

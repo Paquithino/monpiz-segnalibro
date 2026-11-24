@@ -94,7 +94,7 @@ unità: punti, spessore del filo e colori (giallo del logo, crema, azzurro) scal
 | `acqua` | una goccia grande gialla e due piccole crema |
 | `lana` | un gomitolo giallo con i giri di filo crema e il capo libero |
 | `crushable` | un cappello con la freccia curva di chi lo arrotola e lo rimette in forma |
-| `riciclo` | il triangolo delle tre frecce del riciclo (accanto alla nota, `back.note_icon`) |
+| `riciclo` | il triangolo delle tre frecce del riciclo (a destra della nota, `back.note_icon`) |
 
 Per aggiungerne uno: disegnarlo in `icons.py`, aggiungere il nome a `IconName` e a `ICONS`.
 Senza `icon` il dettaglio è solo testo. `back.divider` sceglie cosa separa i dettagli dalla nota:
