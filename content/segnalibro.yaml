@@ -21,9 +21,9 @@ hole:
   diameter_mm: 5
   from_top_mm: 8          # dal bordo alto al centro del foro
 
-# FRONTE: solo il logo nero + giallo, ruotato, si legge dal basso verso l'alto ##################################
+# FRONTE: solo il logo nero + verde, ruotato, si legge dal basso verso l'alto ##################################
 front:
-  logo: images/logo-giallo.svg  # vettoriale, colori CMYK originali
+  logo: images/logo-verde.svg  # vettoriale: nero K 100% + verde PANTONE 7747 C (logo-giallo.svg per il giallo)
   logo_width_mm: 40       # ingombro nella larghezza (la lunghezza segue): 40 su 47 lascia 3,5 mm per lato
 
 # RETRO ######################################################################################################

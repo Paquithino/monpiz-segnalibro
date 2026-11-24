@@ -38,7 +38,7 @@ def test_content_is_valid() -> None:
 
 
 def test_missing_image_is_reported(tmp_path: Path) -> None:
-    broken = _variant(tmp_path, "images/logo-giallo.svg", "images/nope.svg")
+    broken = _variant(tmp_path, "images/logo-verde.svg", "images/nope.svg")
     with pytest.raises(ContentError, match=re.escape("images/nope.svg")):
         load_bookmark(broken, ASSETS)
 

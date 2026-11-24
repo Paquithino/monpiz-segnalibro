@@ -40,3 +40,21 @@ def test_unsupported_svg_is_rejected(tmp_path: Path) -> None:
     )
     with pytest.raises(ContentError, match="rect"):
         load_svg(svg)
+
+
+def test_green_logo_keeps_its_pantone() -> None:
+    logo = load_svg(ASSETS / "images" / "logo-verde.svg")
+    assert logo.aspect == pytest.approx(2.3, abs=0.01)
+    green = [path for path in logo.paths if path.spot]
+    assert green and all(path.spot == "PANTONE 7747 C" for path in green)
+    assert all(path.cmyk == (0.49, 0.3, 0.92, 0.14) for path in green)
+
+
+def test_spot_without_process_alternate_is_rejected(tmp_path: Path) -> None:
+    svg = tmp_path / "logo.svg"
+    svg.write_text(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10">'
+        '<path fill="#898C32" data-spot="PANTONE 7747 C" d="M0 0 L10 0 L10 10 Z"/></svg>'
+    )
+    with pytest.raises(ContentError, match="data-spot"):
+        load_svg(svg)

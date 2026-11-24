@@ -62,12 +62,20 @@ entrambe le facce lascia libero lo spazio sotto il foro. Senza la sezione `hole`
 
 ### Il logo
 
-`assets/images/logo-giallo.svg` è il marchio nero + giallo con i tracciati originali di
-`MONPIZ_BIANCOGIALLO.pdf` (6 tracciati, nessuna conversione in pixel). Ogni tracciato porta in
-`data-cmyk` i valori di stampa originali, che nel PDF vengono scritti in CMYK: il nero resta
-K 100% puro, il giallo C3,5 M27,3 Y81,3 K0 come nel file del marchio (Pantone 142 C, RGB
-243-189-72). `vector.py` legge solo l'SVG che serve a un logo (tracciati pieni, niente
-trasformazioni, testi o immagini) e rifiuta il resto con un messaggio chiaro.
+`assets/images/logo-verde.svg` (quello in uso) e `logo-giallo.svg` sono il marchio con i
+tracciati originali dei file `04_MONPIZ_NEROVERDE_.pdf` e `MONPIZ_BIANCOGIALLO.pdf`, senza
+nessuna conversione in pixel. Ogni tracciato porta i colori di stampa della scheda del marchio:
+
+| Logo | Nero | Colore |
+|---|---|---|
+| verde | K 100% | tinta piatta PANTONE 7747 C, in quadricromia CMYK 49 30 92 14 |
+| giallo | K 100% | CMYK 3,5 27,3 81,3 0 (Pantone 142 C) |
+
+Nel PDF il verde è un colore Separation "PANTONE 7747 C" con l'alternativa CMYK: chi stampa con
+la tinta Pantone la usa, chi stampa in quadricromia ottiene i valori della scheda. Si cambia
+logo con `front.logo` nel YAML. `vector.py` legge solo l'SVG che serve a un logo (tracciati
+pieni con `data-cmyk` ed eventuale `data-spot`, niente trasformazioni, testi o immagini) e
+rifiuta il resto con un messaggio chiaro.
 
 ### Retro in italiano e inglese
 
@@ -115,7 +123,7 @@ leggono senza problemi anche col telefono a 20-30 cm. Nel PDF sono anche link cl
 
 ```
 content/segnalibro.yaml  formato, foro, fronte, retro (italiano + inglese)
-assets/                  fonts/ (OFL), images/logo-giallo.svg e images/riciclo.svg
+assets/                  fonts/ (OFL), images/ (logo-verde.svg, logo-giallo.svg, riciclo.svg)
 src/monpiz_segnalibro/
   geometry.py            mm -> pt, box, colonne, a capo (funzioni pure)
   models.py              schema dei contenuti (Pydantic, chiavi sconosciute rifiutate)

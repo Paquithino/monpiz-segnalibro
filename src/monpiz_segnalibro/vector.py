@@ -1,9 +1,11 @@
 """Vector artwork from SVG files: just enough SVG for a logo exported from Illustrator.
 
 Supported: ``<path>`` elements with ``d`` (M, L, H, V, C, S, Z, absolute and
-relative), ``fill`` as ``#rrggbb``, ``fill-rule`` and a ``data-cmyk`` attribute
-("c m y k", 0..1) that carries the print colour: when present it wins over
-``fill``, so the PDF keeps the brand's CMYK values instead of a conversion.
+relative), ``fill`` as ``#rrggbb``, ``fill-rule`` and two print attributes:
+``data-cmyk`` ("c m y k", 0..1), which wins over ``fill`` so the PDF keeps the
+brand's CMYK values instead of a conversion, and ``data-spot`` (e.g.
+"PANTONE 7747 C"), which makes the colour a spot ink with ``data-cmyk`` as its
+process alternate, as in the brand's own files.
 Anything else (transforms, strokes, gradients, text, images) is rejected
 with a clear message rather than drawn wrong: flatten it in the source file.
 """
@@ -34,6 +36,7 @@ class VectorPath:
     commands: tuple[Command, ...]
     rgb: str  # "#rrggbb", for screen
     cmyk: tuple[float, float, float, float] | None  # for print, when the source says so
+    spot: str | None  # spot ink name; cmyk is then its process alternate
     even_odd: bool
 
 
@@ -148,11 +151,18 @@ def load_svg(path: Path) -> VectorArtwork:
             commands = parse_path(element.attrib["d"])
         except (KeyError, ValueError) as exc:
             raise ContentError(f"{where}: dati del tracciato non validi ({exc})") from exc
+        cmyk = _cmyk(element.attrib.get("data-cmyk"), where)
+        spot = element.attrib.get("data-spot")
+        if spot is not None and cmyk is None:
+            raise ContentError(
+                f"{where}: data-spot vuole anche data-cmyk, il colore alternativo in quadricromia"
+            )
         paths.append(
             VectorPath(
                 commands=commands,
                 rgb=_colour(element.attrib.get("fill", "#000000"), where),
-                cmyk=_cmyk(element.attrib.get("data-cmyk"), where),
+                cmyk=cmyk,
+                spot=spot,
                 even_odd=element.attrib.get("fill-rule") == "evenodd",
             )
         )

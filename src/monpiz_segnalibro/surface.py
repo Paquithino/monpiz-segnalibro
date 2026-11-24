@@ -14,7 +14,7 @@ from enum import StrEnum
 from reportlab.graphics import renderPDF
 from reportlab.graphics.barcode.qr import QrCodeWidget
 from reportlab.graphics.shapes import Drawing
-from reportlab.lib.colors import Color, HexColor
+from reportlab.lib.colors import CMYKColorSep, Color, HexColor
 from reportlab.pdfbase.pdfmetrics import stringWidth
 from reportlab.pdfgen.canvas import FILL_EVEN_ODD, FILL_NON_ZERO, Canvas
 
@@ -225,7 +225,8 @@ class Surface:
         ``length`` is the artwork's own width (now running up the card) and
         ``side`` its own height (now across the card); ``centre`` is where the
         middle of the artwork lands. Paths with a CMYK colour are filled in
-        DeviceCMYK, so the logo keeps its print values (pure K black).
+        DeviceCMYK, so the logo keeps its print values (pure K black); paths
+        with a spot ink become a Separation colour, the Pantone of the brand.
         """
         c = self._canvas
         c.saveState()
@@ -235,7 +236,9 @@ class Surface:
         c.scale(length / artwork.width, -side / artwork.height)
         c.translate(-artwork.x - artwork.width / 2, -artwork.y - artwork.height / 2)
         for vector in artwork.paths:
-            if vector.cmyk:
+            if vector.cmyk and vector.spot:
+                c.setFillColor(CMYKColorSep(*vector.cmyk, spotName=vector.spot))
+            elif vector.cmyk:
                 c.setFillColorCMYK(*vector.cmyk)
             else:
                 c.setFillColor(HexColor(vector.rgb))
