@@ -31,6 +31,8 @@ back:
   eyebrow: Cappelli · Hats
   title: Dettagli
   title_italic: Details
+  intro: "Ricamati a mano: ogni pezzo è unico, diverso da tutti gli altri."
+  intro_en: "Hand embroidered: no two alike."
   layout: grid            # grid: due per riga (fino a 4) | list: uno sotto l'altro, con descrizione lunga
   details:                # da 1 a 4, in quest'ordine. Toppe: lana, ricamo, crushable, acqua (src/.../icons.py)
     - name: Lana 100%

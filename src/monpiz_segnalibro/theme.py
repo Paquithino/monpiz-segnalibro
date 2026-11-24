@@ -94,7 +94,7 @@ def default_theme() -> Theme:
     )
     t = Typography(
         eyebrow=TextStyle(Font.SANS, 5.4, 7.0, p.accent, tracking=1.3, uppercase=True),
-        title=TextStyle(Font.DISPLAY, 17.0, 18.0, p.ink),
+        title=TextStyle(Font.DISPLAY, 16.5, 18.0, p.ink),
         title_italic=TextStyle(Font.DISPLAY_ITALIC, 12.5, 14.5, p.accent),
         item=TextStyle(Font.SERIF, 9.0, 11.0, p.ink),
         grid_item=TextStyle(Font.SERIF, 8.2, 9.8, p.ink),

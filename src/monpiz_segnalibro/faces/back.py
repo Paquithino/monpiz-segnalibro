@@ -32,6 +32,9 @@ from .base import RenderContext
 
 EYEBROW_TO_TITLE = 19.0
 TITLE_TO_DASHES = 11.0
+TITLE_TO_ITALIC = 4.0  # word space between the title and its italic, on one line
+TITLE_TO_INTRO = 13.0  # last baseline of the title -> first of the intro
+INTRO_TO_TRANSLATION = 10.0
 DASHES = (3.4, 2.2)  # on, off: the rhythm of the logo's dashed arrow
 DASH_WIDTH = 2.2
 DASH_LENGTH = mm(9.5)
@@ -45,15 +48,15 @@ NAME_TO_TEXT = 10.5
 DETAIL_GAP = 12.0  # bottom of a detail -> top of the next
 
 # grid layout
-GRID_BADGE = mm(10.5)
+GRID_BADGE = mm(9.5)
 GRID_BADGE_TO_NAME = 10.0  # bottom of the patch -> first baseline of the name
 GRID_NAME_TO_TEXT = 8.0
 GRID_ROW_GAP = 11.0  # bottom of a row -> top of the next
 GRID_GUTTER = mm(2.0)
 
-QR_SIDE = mm(15.0)
+QR_SIDE = mm(14.0)
 QR_TO_LABEL = 8.0  # bottom of the QR code -> label baseline
-LABEL_TO_FOOTER = 20.0  # air between the QR codes and the sign-off: its own block
+LABEL_TO_FOOTER = 17.0  # air between the QR codes and the sign-off: its own block
 SKYLINE_HEIGHT = mm(7.0)  # across the whole column, like the lookbook's skyline
 SKYLINE_WIDTH = 1.0
 MIN_GAP = 10.0  # least air between the middle blocks
@@ -79,13 +82,30 @@ class BackFace:
         surface.fill(p.paper)
 
         # Top: heading, yellow dashes, details.
-        baseline = ctx.content_top + t.eyebrow.size
-        surface.text(self.back.eyebrow, x, baseline, t.eyebrow)
-        last = surface.paragraph(self.back.title, x, baseline + EYEBROW_TO_TITLE, width, t.title)
+        if self.back.eyebrow:
+            baseline = ctx.content_top + t.eyebrow.size
+            surface.text(self.back.eyebrow, x, baseline, t.eyebrow)
+            title = baseline + EYEBROW_TO_TITLE
+        else:
+            title = ctx.content_top + t.title.size * CAP_HEIGHT
+        last = surface.paragraph(self.back.title, x, title, width, t.title)
         if self.back.title_italic:
-            last = surface.paragraph(
-                self.back.title_italic, x, last + t.title_italic.leading, width, t.title_italic
-            )
+            # On the same line when it fits ("Dettagli Details"), otherwise underneath.
+            lines = surface.lines(self.back.title, t.title, width)
+            after = text_width(lines[-1], t.title) + TITLE_TO_ITALIC
+            if (
+                "\n" not in self.back.title_italic
+                and after + text_width(self.back.title_italic, t.title_italic) <= width
+            ):
+                surface.text(self.back.title_italic, x + after, last, t.title_italic)
+            else:
+                last = surface.paragraph(
+                    self.back.title_italic, x, last + t.title_italic.leading, width, t.title_italic
+                )
+        if self.back.intro:  # a line or two under the title, Italian then English
+            last = surface.paragraph(self.back.intro, x, last + TITLE_TO_INTRO, width, t.text)
+        if self.back.intro_en:
+            last = surface.paragraph(self.back.intro_en, x, last + INTRO_TO_TRANSLATION, width, t.translation)
         dashes = last + TITLE_TO_DASHES
         surface.hline(x, x + DASH_LENGTH, dashes, p.yellow, DASH_WIDTH, dash=DASHES)
 

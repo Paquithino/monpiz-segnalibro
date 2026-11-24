@@ -71,8 +71,9 @@ trasformazioni, testi o immagini) e rifiuta il resto con un messaggio chiaro.
 
 ### Retro in italiano e inglese
 
-Ogni testo italiano ha la sua riga inglese in corsivo verde oliva sotto (`name_en`, `note_en`,
-`footer_en`). Titolo in alto, QR e firma in basso; in mezzo dettagli, trattini e nota si
+Ogni testo italiano ha la sua riga inglese in corsivo verde oliva sotto (`intro_en`, `name_en`,
+`note_en`, `footer_en`). Il titolo e il suo corsivo stanno sulla stessa riga quando ci entrano
+("Dettagli *Details*"); sotto, `intro` dice che ogni pezzo è ricamato a mano e quindi unico. Titolo in alto, QR e firma in basso; in mezzo dettagli, trattini e nota si
 dividono lo spazio libero in parti uguali, così i blocchi restano proporzionati anche cambiando
 i testi.
 

@@ -77,9 +77,11 @@ class QrCode(_Model):
 
 
 class Back(_Model):
-    eyebrow: Text
+    eyebrow: str = ""  # small capitals above the title
     title: Text
     title_italic: str = ""
+    intro: str = ""  # under the title: every hat is one of a kind
+    intro_en: str = ""
     layout: Literal["list", "grid"] = "list"  # grid: two per row, for three or four details
     details: list[Detail] = Field(min_length=1, max_length=4)
     note: str = ""  # "Il viaggio continua tra le pagine..."
