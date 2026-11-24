@@ -94,10 +94,13 @@ unità: punti, spessore del filo e colori (giallo del logo, crema, azzurro) scal
 | `acqua` | una goccia grande gialla e due piccole crema |
 | `lana` | un gomitolo giallo con i giri di filo crema e il capo libero |
 | `crushable` | un cappello con la freccia curva di chi lo arrotola e lo rimette in forma |
-| `riciclo` | il triangolo delle tre frecce del riciclo (a destra della nota, `back.note_icon`) |
 
 Per aggiungerne uno: disegnarlo in `icons.py`, aggiungere il nome a `IconName` e a `ICONS`.
-Senza `icon` il dettaglio è solo testo. `back.divider` sceglie cosa separa i dettagli dalla nota:
+Senza `icon` il dettaglio è solo testo.
+
+A destra della nota ("Riutilizzami come segnalibro") `back.note_sign: riciclo` mette il simbolo
+universale del riciclo, piatto e senza toppa, nel verde oliva della nota: tre frecce piegate
+sugli angoli di un triangolo, disegnate come poligoni in `icons.py`. `back.divider` sceglie cosa separa i dettagli dalla nota:
 `trattini` (gli stessi trattini gialli sotto il titolo), `montagne` (il profilo giallo a tutta
 larghezza) o `nessuno`.
 
@@ -120,7 +123,7 @@ src/monpiz_segnalibro/
   vector.py              lettore SVG minimale: il logo come tracciati, colori CMYK
   outline.py             testi convertiti in tracciati per il PDF vettoriale
   mountain.py            lo skyline dolomitico del lookbook, qui richiama i ricami dei cappelli
-  icons.py               motivi ricamati delle toppe (lana, ricamo, crushable, acqua, riciclo)
+  icons.py               motivi ricamati delle toppe e simbolo del riciclo
   faces/                 fronte e retro
   builder.py             le due pagine, TrimBox/BleedBox, segni di taglio, guide
   cli.py, watch.py       comandi build / watch / check

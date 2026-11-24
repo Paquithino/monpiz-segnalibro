@@ -20,7 +20,7 @@ from reportlab.pdfgen.canvas import FILL_EVEN_ODD, FILL_NON_ZERO, Canvas
 
 from .geometry import Box, wrap_text
 from .icons import BOX as ICON_BOX
-from .icons import Stroke, Thread
+from .icons import Polygon, Stroke, Thread
 from .outline import Outliner
 from .theme import Font, TextStyle
 from .vector import VectorArtwork
@@ -167,6 +167,24 @@ class Surface:
                 elif command == "Z":
                     path.close()
             c.drawPath(path, stroke=1, fill=0)
+        c.restoreState()
+
+    def sign(self, polygons: Sequence[Polygon], box: Box, color: Color) -> None:
+        """Filled polygons from the 100 x 100 icon box, scaled into ``box``, in one colour."""
+        c = self._canvas
+        scale = min(box.width, box.height) / ICON_BOX
+        c.saveState()
+        c.translate(box.x, self._y(box.top))
+        c.scale(scale, -scale)  # icon units, origin top-left, y downwards
+        c.setFillColor(color)
+        for polygon in polygons:
+            path = c.beginPath()
+            (x, y), *rest = polygon
+            path.moveTo(x, y)
+            for x, y in rest:
+                path.lineTo(x, y)
+            path.close()
+            c.drawPath(path, stroke=0, fill=1)
         c.restoreState()
 
     def _stitch(self, color: Color, width: float, dash: tuple[float, float] | None) -> None:

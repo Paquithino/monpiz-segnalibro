@@ -32,7 +32,7 @@ back:
   title: Dettagli
   title_italic: Details
   layout: grid            # grid: due per riga (fino a 4) | list: uno sotto l'altro, con descrizione lunga
-  details:                # da 1 a 4, in quest'ordine. Toppe: lana, ricamo, crushable, acqua, riciclo (src/.../icons.py)
+  details:                # da 1 a 4, in quest'ordine. Toppe: lana, ricamo, crushable, acqua (src/.../icons.py)
     - name: Lana 100%
       name_en: 100% wool
       icon: lana
@@ -46,9 +46,9 @@ back:
       name_en: Waterproof
       icon: acqua
   divider: trattini       # tra dettagli e nota: trattini (come sotto il titolo) | montagne (profilo giallo) | nessuno
-  note: Non buttare questo cartellino, usalo come segnalibro.
-  note_en: Keep this tag and use it as a bookmark.
-  note_icon: riciclo      # toppa a destra della frase (togli la riga per non averla)
+  note: Riutilizzami come segnalibro.
+  note_en: Reuse me as a bookmark.
+  note_sign: riciclo      # simbolo del riciclo a destra della frase (togli la riga per non averlo)
   qr:                     # da 0 a 2, affiancati in basso
     - url: https://www.monpiz.it
       label: monpiz.it

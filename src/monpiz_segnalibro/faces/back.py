@@ -22,7 +22,7 @@ from reportlab.lib.colors import Color
 
 from ..errors import ContentError
 from ..geometry import Box, balanced_lines, columns, mm
-from ..icons import ICONS, Thread
+from ..icons import ICONS, SIGNS, Thread
 from ..models import Back, Detail
 from ..mountain import SKYLINE, place
 from ..surface import Align, MeasuringSurface, Surface, text_width
@@ -56,8 +56,8 @@ LABEL_TO_FOOTER = 13.0
 SKYLINE_HEIGHT = mm(7.0)  # across the whole column, like the lookbook's skyline
 SKYLINE_WIDTH = 1.0
 MIN_GAP = 10.0  # least air between the middle blocks
-NOTE_BADGE = mm(9.5)  # felt patch beside the note
-NOTE_BADGE_TO_TEXT = mm(2.2)
+NOTE_SIGN = mm(9.0)  # recycling sign on the right of the note
+NOTE_SIGN_TO_TEXT = mm(3.0)
 X_HEIGHT = 0.5  # Fraunces lowercase body, share of the size: where a line visibly starts
 NOTE_TO_TRANSLATION = 12.0  # last baseline of the note -> first baseline of its English line
 NAME_TO_TRANSLATION = 9.0  # last baseline of a name -> its English line
@@ -141,9 +141,9 @@ class BackFace:
 
 
 class _Note:
-    """The "keep this tag" note, its English line, and a felt patch on their right if set.
+    """The "reuse me" note, its English line, and a flat sign on their right if set.
 
-    Its top is the top of the patch or of the first line's lowercase body, so the
+    Its top is the top of the sign or of the first line's lowercase body, so the
     gaps around it look even on the page.
     """
 
@@ -151,11 +151,11 @@ class _Note:
         t = ctx.theme.type
         self._back, self._ctx, self._surface = back, ctx, surface
         self._x = ctx.theme.grid.margin
-        self._patch = NOTE_BADGE if back.note_icon else 0.0
+        self._patch = NOTE_SIGN if back.note_sign else 0.0
         # Text on the left margin like every other block, the patch on the right edge.
         self._text_x = self._x
         self._patch_x = self._x + width - self._patch
-        text_width_ = width - (self._patch + NOTE_BADGE_TO_TEXT if back.note_icon else 0.0)
+        text_width_ = width - (self._patch + NOTE_SIGN_TO_TEXT if back.note_sign else 0.0)
         self._lines = surface.lines(back.note, t.note, text_width_) if back.note else []
         self._en = surface.lines(back.note_en, t.translation, text_width_) if back.note_en else []
         text = 0.0
@@ -168,9 +168,9 @@ class _Note:
 
     def draw(self, top: float) -> None:
         t, p = self._ctx.theme.type, self._ctx.theme.palette
-        if self._back.note_icon:
+        if self._back.note_sign:
             patch = Box(self._patch_x, top + (self.height - self._patch) / 2, self._patch, self._patch)
-            self._surface.patch(ICONS[self._back.note_icon], patch, p.felt, _threads(self._ctx.theme))
+            self._surface.sign(SIGNS[self._back.note_sign], patch, p.accent)  # the colour of the note
         first = top + (self.height - self._text) / 2 + t.note.size * X_HEIGHT
         for index, line in enumerate(self._lines):
             self._surface.text(line, self._text_x, first + index * t.note.leading, t.note)

@@ -14,7 +14,7 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints, field_validator, model_validator
 
-from .icons import IconName
+from .icons import IconName, SignName
 
 Text = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
 
@@ -78,9 +78,9 @@ class Back(_Model):
     title_italic: str = ""
     layout: Literal["list", "grid"] = "list"  # grid: two per row, for three or four details
     details: list[Detail] = Field(min_length=1, max_length=4)
-    note: str = ""  # "Non buttare questo cartellino..."
+    note: str = ""  # "Riutilizzami come segnalibro."
     note_en: str = ""  # bilingual cards: in italics under the note
-    note_icon: IconName | None = None  # a felt patch on the right of the note (e.g. riciclo)
+    note_sign: SignName | None = None  # a flat sign on the right of the note (riciclo)
     divider: Literal["montagne", "trattini", "nessuno"] = "montagne"  # between details and note
     qr: list[QrCode] = Field(default_factory=list, max_length=2)
     footer: str = ""

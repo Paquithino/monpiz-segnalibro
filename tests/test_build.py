@@ -60,8 +60,8 @@ def test_build_writes_front_and_back(tmp_path: Path) -> None:
 
 
 def test_text_that_does_not_fit_stops_the_build(tmp_path: Path) -> None:
-    long_note = "note: " + " ".join(["Non buttare questo cartellino."] * 12)
-    broken = _variant(tmp_path, "note: Non buttare questo cartellino, usalo come segnalibro.", long_note)
+    long_note = "note: " + " ".join(["Riutilizzami come segnalibro."] * 12)
+    broken = _variant(tmp_path, "note: Riutilizzami come segnalibro.", long_note)
     with pytest.raises(ContentError, match="non sta nel formato"):
         build(BuildOptions(broken, ASSETS, tmp_path / "out.pdf"))
 
@@ -79,7 +79,7 @@ def test_artwork_starts_below_the_hole() -> None:
 def test_back_is_bilingual() -> None:
     back = load_bookmark(CONTENT, ASSETS).back
     assert all(detail.name_en for detail in back.details)
-    assert back.note_en and back.footer_en and back.note_icon == "riciclo"
+    assert back.note_en and back.footer_en and back.note_sign == "riciclo"
 
 
 def test_vector_copy_has_no_images_and_no_fonts(tmp_path: Path) -> None:
