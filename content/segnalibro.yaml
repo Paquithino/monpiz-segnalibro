@@ -46,8 +46,8 @@ back:
       name_en: Waterproof
       icon: acqua
   divider: trattini       # tra dettagli e nota: trattini (come sotto il titolo) | montagne (profilo giallo) | nessuno
-  note: "Il viaggio continua\ntra le pagine:\ntienimi con te."   # \n = a capo
-  note_en: "The journey goes on between the pages: keep me with you."
+  note: "Il viaggio continua\ntra le pagine:\nriutilizzami come\nsegnalibro."   # \n = a capo
+  note_en: "The journey goes on\nbetween the pages:\nreuse me as a bookmark."
   note_sign: images/riciclo.svg  # simbolo del riciclo a destra della frase (togli la riga per non averlo)
   qr:                     # da 0 a 2, affiancati in basso
     - url: https://www.monpiz.it
