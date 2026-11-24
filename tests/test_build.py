@@ -76,11 +76,10 @@ def test_artwork_starts_below_the_hole() -> None:
     assert with_hole.content_top > mm(bookmark.hole.bottom_mm)
 
 
-def test_bilingual_version_builds(tmp_path: Path) -> None:
-    content = ROOT / "content" / "segnalibro-bilingue.yaml"
-    bookmark = load_bookmark(content, ASSETS)
-    assert all(detail.name_en for detail in bookmark.back.details)
-    build(BuildOptions(content, ASSETS, tmp_path / "bilingue.pdf"))
+def test_back_is_bilingual() -> None:
+    back = load_bookmark(CONTENT, ASSETS).back
+    assert all(detail.name_en for detail in back.details)
+    assert back.note_en and back.footer_en and back.note_icon == "riciclo"
 
 
 def test_vector_copy_has_no_images_and_no_fonts(tmp_path: Path) -> None:

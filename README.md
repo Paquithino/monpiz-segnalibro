@@ -12,7 +12,6 @@ monpiz-segnalibro build              # dist/MonPiz-Segnalibro.pdf + dist/MonPiz-
 monpiz-segnalibro build --marks      # con segni di taglio
 monpiz-segnalibro build --no-vector  # solo il primo PDF
 monpiz-segnalibro build --guides -o dist/bozza.pdf   # rifilo, area di sicurezza e foro in magenta (solo bozza)
-monpiz-segnalibro build --content content/segnalibro-bilingue.yaml -o dist/MonPiz-Segnalibro-bilingue.pdf
 monpiz-segnalibro check              # valida contenuti, logo e font
 monpiz-segnalibro watch --guides     # anteprima live: rigenera a ogni salvataggio
 ```
@@ -29,7 +28,7 @@ tutti tracciati, nitidi a qualsiasi ingrandimento. `build` scrive due file:
 
 La conversione (`outline.py`) legge i glifi dagli stessi file TrueType e li avanza con le stesse
 larghezze usate per l'impaginazione: le due versioni coincidono. Con `-o dist/X.pdf` la copia
-vettoriale si chiama `dist/X-vettoriale.pdf`.
+vettoriale si chiama `dist/X-vettoriale.pdf`. Ogni PDF ha due pagine: fronte e retro.
 
 `watch` funziona come nella brochure: tiene d'occhio `content/`, `assets/` e `src/` e
 rigenera `dist/MonPiz-Segnalibro-anteprima.pdf` (già rifilato) a ogni file salvato. Aperto in
@@ -70,12 +69,12 @@ K 100% puro, il giallo C3,5 M27,3 Y81,3 K0 come nel file del marchio (Pantone 14
 243-189-72). `vector.py` legge solo l'SVG che serve a un logo (tracciati pieni, niente
 trasformazioni, testi o immagini) e rifiuta il resto con un messaggio chiaro.
 
-### Due versioni: italiano e bilingue
+### Retro in italiano e inglese
 
-- `content/segnalibro.yaml`: solo italiano, ogni dettaglio con una riga breve sotto il nome.
-- `content/segnalibro-bilingue.yaml`: italiano + inglese. I campi `name_en`, `note_en` e
-  `footer_en` vanno in corsivo verde oliva sotto l'italiano; per lasciare respiro i dettagli
-  qui non hanno la riga descrittiva.
+Ogni testo italiano ha la sua riga inglese in corsivo verde oliva sotto (`name_en`, `note_en`,
+`footer_en`). Titolo in alto, QR e firma in basso; in mezzo dettagli, trattini e nota si
+dividono lo spazio libero in parti uguali, così i blocchi restano proporzionati anche cambiando
+i testi.
 
 ### I dettagli e le toppe ricamate
 
@@ -95,11 +94,12 @@ unità: punti, spessore del filo e colori (giallo del logo, crema, azzurro) scal
 | `acqua` | una goccia grande gialla e due piccole crema |
 | `lana` | un gomitolo giallo con i giri di filo crema e il capo libero |
 | `crushable` | un cappello con la freccia curva di chi lo arrotola e lo rimette in forma |
+| `riciclo` | il triangolo delle tre frecce del riciclo (accanto alla nota, `back.note_icon`) |
 
 Per aggiungerne uno: disegnarlo in `icons.py`, aggiungere il nome a `IconName` e a `ICONS`.
 Senza `icon` il dettaglio è solo testo. `back.divider` sceglie cosa separa i dettagli dalla nota:
-`montagne` (il profilo giallo a tutta larghezza), `trattini` (gli stessi trattini gialli sotto il
-titolo) o `nessuno`.
+`trattini` (gli stessi trattini gialli sotto il titolo), `montagne` (il profilo giallo a tutta
+larghezza) o `nessuno`.
 
 ### I QR
 
@@ -109,8 +109,7 @@ leggono senza problemi anche col telefono a 20-30 cm. Nel PDF sono anche link cl
 ## Struttura
 
 ```
-content/segnalibro.yaml           formato, foro, fronte, retro (italiano)
-content/segnalibro-bilingue.yaml  stessa cosa, italiano + inglese
+content/segnalibro.yaml  formato, foro, fronte, retro (italiano + inglese)
 assets/                  fonts/ (OFL) e images/logo-giallo.svg
 src/monpiz_segnalibro/
   geometry.py            mm -> pt, box, colonne, a capo (funzioni pure)
@@ -121,7 +120,7 @@ src/monpiz_segnalibro/
   vector.py              lettore SVG minimale: il logo come tracciati, colori CMYK
   outline.py             testi convertiti in tracciati per il PDF vettoriale
   mountain.py            lo skyline dolomitico del lookbook, qui richiama i ricami dei cappelli
-  icons.py               motivi ricamati delle toppe (ricamo, acqua, lana, crushable)
+  icons.py               motivi ricamati delle toppe (lana, ricamo, crushable, acqua, riciclo)
   faces/                 fronte e retro
   builder.py             le due pagine, TrimBox/BleedBox, segni di taglio, guide
   cli.py, watch.py       comandi build / watch / check

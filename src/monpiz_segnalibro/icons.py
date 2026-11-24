@@ -13,12 +13,13 @@ To add a motif: draw it here, add its name to :data:`IconName` and to
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 from typing import Literal
 
 BOX = 100.0
 
-IconName = Literal["ricamo", "acqua", "lana", "crushable"]
+IconName = Literal["ricamo", "acqua", "lana", "crushable", "riciclo"]
 Thread = Literal["yellow", "cream", "blue"]  # colours of the thread, resolved by the theme
 
 # One path command: "M" x y, "L" x y, "C" x1 y1 x2 y2 x y, "Z".
@@ -118,9 +119,38 @@ CRUSHABLE: tuple[Stroke, ...] = (
     Stroke(_line((66, 35), (72, 41), (78, 35)), "cream", 2.2, None),  # arrow head, pointing down
 )
 
+
+def _side_arrow(start: tuple[float, float], end: tuple[float, float]) -> tuple[Stroke, Stroke]:
+    """One side of the recycling triangle: a stitched shaft from ``start`` towards ``end``,
+    stopping short of both corners, and a solid arrowhead pointing at the next side.
+    """
+    (x0, y0), (x1, y1) = start, end
+    length = math.hypot(x1 - x0, y1 - y0)
+    ux, uy = (x1 - x0) / length, (y1 - y0) / length  # along the side
+    nx, ny = -uy, ux
+    tail = (x0 + ux * length * 0.2, y0 + uy * length * 0.2)
+    tip = (x0 + ux * length * 0.84, y0 + uy * length * 0.84)
+    back, half = 9.0, 6.5
+    head = _line(
+        (tip[0] - ux * back + nx * half, tip[1] - uy * back + ny * half),
+        tip,
+        (tip[0] - ux * back - nx * half, tip[1] - uy * back - ny * half),
+    )
+    return Stroke(_line(tail, tip), "yellow", 3.4), Stroke(head, "yellow", 3.4, None)
+
+
+# Recycling: the classic triangle of three arrows chasing each other, clockwise.
+_TOP, _RIGHT, _LEFT = (50.0, 22.0), (77.0, 69.0), (23.0, 69.0)
+RECYCLE: tuple[Stroke, ...] = (
+    *_side_arrow(_TOP, _RIGHT),
+    *_side_arrow(_RIGHT, _LEFT),
+    *_side_arrow(_LEFT, _TOP),
+)
+
 ICONS: dict[str, tuple[Stroke, ...]] = {
     "ricamo": EMBROIDERY,
     "acqua": WATER,
     "lana": WOOL,
     "crushable": CRUSHABLE,
+    "riciclo": RECYCLE,
 }

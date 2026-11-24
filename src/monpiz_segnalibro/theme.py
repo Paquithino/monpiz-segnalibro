@@ -101,7 +101,7 @@ def default_theme() -> Theme:
         translation=TextStyle(Font.DISPLAY_ITALIC, 7.0, 8.6, p.accent),
         text=TextStyle(Font.SANS, 6.6, 9.4, p.body),
         caption=TextStyle(Font.SANS, 5.8, 7.6, p.body),
-        note=TextStyle(Font.DISPLAY_ITALIC, 9.6, 12.0, p.accent),
+        note=TextStyle(Font.DISPLAY_ITALIC, 8.8, 10.8, p.accent),
         label=TextStyle(Font.SANS, 5.4, 7.0, p.ink),
         small=TextStyle(Font.SANS, 5.4, 7.0, p.muted),
     )

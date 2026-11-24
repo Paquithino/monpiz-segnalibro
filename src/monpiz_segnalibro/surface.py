@@ -269,3 +269,24 @@ class Surface:
         for index, line in enumerate(lines):
             self.text(line, x, baseline + index * style.leading, style)
         return baseline + (len(lines) - 1) * style.leading
+
+
+class MeasuringSurface(Surface):
+    """Same geometry and text metrics as ``real``, but draws nothing.
+
+    Lets a block be laid out once to learn its height, then placed for real.
+    Only the calls the layout of the details makes are silenced.
+    """
+
+    def __init__(self, real: Surface) -> None:
+        super().__init__(real._canvas, real.width, real.height)  # the canvas is never touched
+
+    def patch(
+        self, strokes: Sequence[Stroke], box: Box, felt: Color, threads: Mapping[Thread, Color]
+    ) -> None:
+        return None
+
+    def text(
+        self, text: str, x: float, baseline: float, style: TextStyle, align: Align = Align.LEFT
+    ) -> float:
+        return text_width(text, style)
