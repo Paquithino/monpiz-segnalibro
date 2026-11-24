@@ -79,7 +79,7 @@ def test_artwork_starts_below_the_hole() -> None:
 def test_back_is_bilingual() -> None:
     back = load_bookmark(CONTENT, ASSETS).back
     assert all(detail.name_en for detail in back.details)
-    assert back.note_en and back.footer_en and back.note_sign == "riciclo"
+    assert back.note_en and back.footer_en and back.note_sign == Path("images/riciclo.svg")
 
 
 def test_vector_copy_has_no_images_and_no_fonts(tmp_path: Path) -> None:

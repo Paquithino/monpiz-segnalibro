@@ -41,5 +41,6 @@ def load_bookmark(content_file: Path, assets_dir: Path) -> Bookmark:
     if missing:
         listing = "\n".join(f"  - {name}" for name in missing)
         raise ContentError(f"Immagini mancanti in {assets_dir}:\n{listing}")
-    load_svg(assets_dir / bookmark.front.logo)  # fails here, at check time, if the SVG is unusable
+    for svg in bookmark.asset_paths():
+        load_svg(assets_dir / svg)  # fails here, at check time, if an SVG is unusable
     return bookmark

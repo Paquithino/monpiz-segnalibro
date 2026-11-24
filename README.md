@@ -98,11 +98,12 @@ unità: punti, spessore del filo e colori (giallo del logo, crema, azzurro) scal
 Per aggiungerne uno: disegnarlo in `icons.py`, aggiungere il nome a `IconName` e a `ICONS`.
 Senza `icon` il dettaglio è solo testo.
 
-A destra della nota ("Riutilizzami come segnalibro") `back.note_sign: riciclo` mette il simbolo
-universale del riciclo, piatto e senza toppa, nel verde oliva della nota: tre frecce piegate
-sugli angoli di un triangolo, disegnate come poligoni in `icons.py`. `back.divider` sceglie cosa separa i dettagli dalla nota:
-`trattini` (gli stessi trattini gialli sotto il titolo), `montagne` (il profilo giallo a tutta
-larghezza) o `nessuno`.
+A destra della nota ("Riutilizzami come segnalibro") `back.note_sign` mette un SVG nel verde
+oliva della nota: `images/riciclo.svg` è il simbolo universale del riciclo (U+267B), con i
+tracciati presi dal font Noto Sans CJK (SIL Open Font License).
+
+`back.divider` sceglie cosa separa i dettagli dalla nota: `trattini` (gli stessi trattini gialli
+sotto il titolo), `montagne` (il profilo giallo a tutta larghezza) o `nessuno`.
 
 ### I QR
 
@@ -113,7 +114,7 @@ leggono senza problemi anche col telefono a 20-30 cm. Nel PDF sono anche link cl
 
 ```
 content/segnalibro.yaml  formato, foro, fronte, retro (italiano + inglese)
-assets/                  fonts/ (OFL) e images/logo-giallo.svg
+assets/                  fonts/ (OFL), images/logo-giallo.svg e images/riciclo.svg
 src/monpiz_segnalibro/
   geometry.py            mm -> pt, box, colonne, a capo (funzioni pure)
   models.py              schema dei contenuti (Pydantic, chiavi sconosciute rifiutate)
@@ -123,7 +124,7 @@ src/monpiz_segnalibro/
   vector.py              lettore SVG minimale: il logo come tracciati, colori CMYK
   outline.py             testi convertiti in tracciati per il PDF vettoriale
   mountain.py            lo skyline dolomitico del lookbook, qui richiama i ricami dei cappelli
-  icons.py               motivi ricamati delle toppe e simbolo del riciclo
+  icons.py               motivi ricamati delle toppe
   faces/                 fronte e retro
   builder.py             le due pagine, TrimBox/BleedBox, segni di taglio, guide
   cli.py, watch.py       comandi build / watch / check

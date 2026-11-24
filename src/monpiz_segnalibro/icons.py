@@ -13,7 +13,6 @@ To add a motif: draw it here, add its name to :data:`IconName` and to
 
 from __future__ import annotations
 
-import math
 from dataclasses import dataclass
 from typing import Literal
 
@@ -119,75 +118,6 @@ CRUSHABLE: tuple[Stroke, ...] = (
     Stroke(_line((66, 35), (72, 41), (78, 35)), "cream", 2.2, None),  # arrow head, pointing down
 )
 
-
-Polygon = tuple[tuple[float, float], ...]
-
-
-def _intersect(
-    p: tuple[float, float], d: tuple[float, float], q: tuple[float, float], e: tuple[float, float]
-) -> tuple[float, float]:
-    """Where the line through ``p`` along ``d`` meets the line through ``q`` along ``e``."""
-    det = d[0] * e[1] - d[1] * e[0]
-    t = ((q[0] - p[0]) * e[1] - (q[1] - p[1]) * e[0]) / det
-    return p[0] + d[0] * t, p[1] + d[1] * t
-
-
-def _bent_arrow(
-    start: tuple[float, float], corner: tuple[float, float], end: tuple[float, float]
-) -> tuple[Polygon, Polygon]:
-    """A band folded around ``corner`` (mitred), from ``start`` to ``end``, and its head."""
-    half, head_half, head_length = 5.5, 11.0, 11.0
-
-    def unit(a: tuple[float, float], b: tuple[float, float]) -> tuple[float, float]:
-        length = math.hypot(b[0] - a[0], b[1] - a[1])
-        return (b[0] - a[0]) / length, (b[1] - a[1]) / length
-
-    d1, d2 = unit(start, corner), unit(corner, end)
-    n1, n2 = (-d1[1] * half, d1[0] * half), (-d2[1] * half, d2[0] * half)
-
-    def offset(point: tuple[float, float], n: tuple[float, float], sign: int) -> tuple[float, float]:
-        return point[0] + sign * n[0], point[1] + sign * n[1]
-
-    band = (
-        offset(start, n1, 1),
-        _intersect(offset(start, n1, 1), d1, offset(end, n2, 1), d2),
-        offset(end, n2, 1),
-        offset(end, n2, -1),
-        _intersect(offset(start, n1, -1), d1, offset(end, n2, -1), d2),
-        offset(start, n1, -1),
-    )
-    k = head_half / half
-    head = (
-        (end[0] + n2[0] * k, end[1] + n2[1] * k),
-        (end[0] + d2[0] * head_length, end[1] + d2[1] * head_length),
-        (end[0] - n2[0] * k, end[1] - n2[1] * k),
-    )
-    return band, head
-
-
-def _recycling_sign() -> tuple[Polygon, ...]:
-    """The universal recycling sign, flat: three folded arrows chasing each other around a
-    triangle, clockwise, each one turning over a corner. One arrow, rotated by 120° twice.
-    """
-    cx, cy, radius = 50.0, 54.0, 38.0
-    corners = [
-        (cx + radius * math.cos(math.radians(a)), cy + radius * math.sin(math.radians(a)))
-        for a in (-90, 30, 150)  # top, bottom right, bottom left (y downwards)
-    ]
-
-    def along(a: tuple[float, float], b: tuple[float, float], f: float) -> tuple[float, float]:
-        return a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f
-
-    shapes: list[Polygon] = []
-    for i in range(3):
-        corner, before, after = corners[i], corners[(i + 2) % 3], corners[(i + 1) % 3]
-        shapes.extend(_bent_arrow(along(corner, before, 0.36), corner, along(corner, after, 0.36)))
-    return tuple(shapes)
-
-
-# Flat signs, drawn without a patch in a single colour.
-SIGNS: dict[str, tuple[Polygon, ...]] = {"riciclo": _recycling_sign()}
-SignName = Literal["riciclo"]
 
 ICONS: dict[str, tuple[Stroke, ...]] = {
     "ricamo": EMBROIDERY,

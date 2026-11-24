@@ -22,11 +22,12 @@ from reportlab.lib.colors import Color
 
 from ..errors import ContentError
 from ..geometry import Box, balanced_lines, columns, mm
-from ..icons import ICONS, SIGNS, Thread
+from ..icons import ICONS, Thread
 from ..models import Back, Detail
 from ..mountain import SKYLINE, place
 from ..surface import Align, MeasuringSurface, Surface, text_width
 from ..theme import Theme
+from ..vector import load_svg
 from .base import RenderContext
 
 EYEBROW_TO_TITLE = 19.0
@@ -170,7 +171,8 @@ class _Note:
         t, p = self._ctx.theme.type, self._ctx.theme.palette
         if self._back.note_sign:
             patch = Box(self._patch_x, top + (self.height - self._patch) / 2, self._patch, self._patch)
-            self._surface.sign(SIGNS[self._back.note_sign], patch, p.accent)  # the colour of the note
+            sign = load_svg(self._ctx.assets_dir / self._back.note_sign)
+            self._surface.artwork(sign, patch, p.accent)  # in the colour of the note
         first = top + (self.height - self._text) / 2 + t.note.size * X_HEIGHT
         for index, line in enumerate(self._lines):
             self._surface.text(line, self._text_x, first + index * t.note.leading, t.note)

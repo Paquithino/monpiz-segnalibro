@@ -14,9 +14,15 @@ from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, StringConstraints, field_validator, model_validator
 
-from .icons import IconName, SignName
+from .icons import IconName
 
 Text = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1)]
+
+
+def _svg_only(value: Path) -> Path:
+    if value.suffix.lower() != ".svg":
+        raise ValueError("serve un file .svg (vettoriale)")
+    return value
 
 
 class _Model(BaseModel):
@@ -55,9 +61,7 @@ class Front(_Model):
     @field_validator("logo")
     @classmethod
     def _svg(cls, value: Path) -> Path:
-        if value.suffix.lower() != ".svg":
-            raise ValueError("il logo deve essere un file .svg (vettoriale)")
-        return value
+        return _svg_only(value)
 
 
 class Detail(_Model):
@@ -80,11 +84,16 @@ class Back(_Model):
     details: list[Detail] = Field(min_length=1, max_length=4)
     note: str = ""  # "Riutilizzami come segnalibro."
     note_en: str = ""  # bilingual cards: in italics under the note
-    note_sign: SignName | None = None  # a flat sign on the right of the note (riciclo)
+    note_sign: Path | None = None  # SVG drawn on the right of the note (the recycling sign)
     divider: Literal["montagne", "trattini", "nessuno"] = "montagne"  # between details and note
     qr: list[QrCode] = Field(default_factory=list, max_length=2)
     footer: str = ""
     footer_en: str = ""  # bilingual cards: second footer line
+
+    @field_validator("note_sign")
+    @classmethod
+    def _svg(cls, value: Path | None) -> Path | None:
+        return None if value is None else _svg_only(value)
 
 
 class Bookmark(_Model):
@@ -107,3 +116,5 @@ class Bookmark(_Model):
 
     def asset_paths(self) -> Iterator[Path]:
         yield self.front.logo
+        if self.back.note_sign:
+            yield self.back.note_sign

@@ -49,11 +49,3 @@ def test_balanced_lines_split_evenly() -> None:
 
     assert balanced_lines("Ricamati a mano", len, 11) == ["Ricamati", "a mano"]
     assert balanced_lines("Corto", len, 11) == ["Corto"]
-
-
-def test_recycling_sign_stays_in_its_box() -> None:
-    from monpiz_segnalibro.icons import BOX, SIGNS
-
-    points = [point for polygon in SIGNS["riciclo"] for point in polygon]
-    assert len(SIGNS["riciclo"]) == 6  # three bands, three heads
-    assert all(0 <= x <= BOX and 0 <= y <= BOX for x, y in points)
