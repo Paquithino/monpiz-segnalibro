@@ -53,7 +53,7 @@ GRID_GUTTER = mm(2.0)
 
 QR_SIDE = mm(15.0)
 QR_TO_LABEL = 8.0  # bottom of the QR code -> label baseline
-LABEL_TO_FOOTER = 13.0
+LABEL_TO_FOOTER = 20.0  # air between the QR codes and the sign-off: its own block
 SKYLINE_HEIGHT = mm(7.0)  # across the whole column, like the lookbook's skyline
 SKYLINE_WIDTH = 1.0
 MIN_GAP = 10.0  # least air between the middle blocks
