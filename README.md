@@ -98,7 +98,7 @@ unità: punti, spessore del filo e colori (giallo del logo, crema, azzurro) scal
 Per aggiungerne uno: disegnarlo in `icons.py`, aggiungere il nome a `IconName` e a `ICONS`.
 Senza `icon` il dettaglio è solo testo.
 
-A destra della nota ("Riutilizzami come segnalibro") `back.note_sign` mette un SVG nel verde
+A destra della nota ("Il viaggio continua tra le pagine…") `back.note_sign` mette un SVG nel verde
 oliva della nota: `images/riciclo.svg` è il simbolo universale del riciclo (U+267B), con i
 tracciati presi dal font Noto Sans CJK (SIL Open Font License).
 

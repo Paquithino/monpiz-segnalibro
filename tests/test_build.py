@@ -61,7 +61,7 @@ def test_build_writes_front_and_back(tmp_path: Path) -> None:
 
 def test_text_that_does_not_fit_stops_the_build(tmp_path: Path) -> None:
     long_note = "note: " + " ".join(["Riutilizzami come segnalibro."] * 12)
-    broken = _variant(tmp_path, "note: Riutilizzami come segnalibro.", long_note)
+    broken = _variant(tmp_path, 'note: "Il viaggio continua\\ntra le pagine:\\ntienimi con te."', long_note)
     with pytest.raises(ContentError, match="non sta nel formato"):
         build(BuildOptions(broken, ASSETS, tmp_path / "out.pdf"))
 

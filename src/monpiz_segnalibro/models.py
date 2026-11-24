@@ -82,7 +82,7 @@ class Back(_Model):
     title_italic: str = ""
     layout: Literal["list", "grid"] = "list"  # grid: two per row, for three or four details
     details: list[Detail] = Field(min_length=1, max_length=4)
-    note: str = ""  # "Riutilizzami come segnalibro."
+    note: str = ""  # "Il viaggio continua tra le pagine..."
     note_en: str = ""  # bilingual cards: in italics under the note
     note_sign: Path | None = None  # SVG drawn on the right of the note (the recycling sign)
     divider: Literal["montagne", "trattini", "nessuno"] = "montagne"  # between details and note
