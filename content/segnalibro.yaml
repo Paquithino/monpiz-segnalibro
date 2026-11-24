@@ -24,7 +24,7 @@ hole:
 # FRONTE: solo il logo nero + giallo, ruotato, si legge dal basso verso l'alto ##################################
 front:
   logo: images/logo-giallo.svg  # vettoriale, colori CMYK originali
-  logo_width_mm: 36       # ingombro del logo nella larghezza del cartellino (la lunghezza segue)
+  logo_width_mm: 40       # ingombro nella larghezza (la lunghezza segue): 40 su 47 lascia 3,5 mm per lato
 
 # RETRO ######################################################################################################
 back:
